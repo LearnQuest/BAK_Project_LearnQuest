@@ -1,22 +1,24 @@
 package com.example.heidrun.bak_project_learnquest;
 
+
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.google.android.gms.location.Geofence;
@@ -38,8 +40,8 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
+public class Fragment_maps_class extends Fragment {
     private static final String TAG = "Maps_TaG";
     private GoogleMap mMap;
     private static final int LOC_PERM_REQ_CODE = 1;
@@ -53,57 +55,23 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLngBounds fh_Gelaende = new LatLngBounds(
             new LatLng(47.068679, 15.405647), new LatLng(47.070013, 15.410073));
 
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_maps, container, false);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                LatLng latLng = new LatLng(1.289545, 103.849972);
+                googleMap.addMarker(new MarkerOptions().position(latLng)
+                        .title("Singapore"));
+                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            }
+        });
         geofencingClient = LocationServices.getGeofencingClient(this);
-
     }
-
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_options, menu);
-        return true;
-    }
-
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Change the map type based on the user's selection.
-        switch (item.getItemId()) {
-            case R.id.normal_map:
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-                return true;
-            case R.id.hybrid_map:
-                mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-                return true;
-            case R.id.satellite_map:
-                mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-                return true;
-            case R.id.terrain_map:
-                mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
 
     public void changeType(View view) {
         if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
@@ -112,7 +80,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
     }
 
-    @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         try {
@@ -128,19 +95,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
-
         LatLng fh = new LatLng(47.068990, 15.406672);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(fh, zoom);
         mMap.setLatLngBoundsForCameraTarget(fh_Gelaende);
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(fh_Gelaende, 0));
         mMap.setMinZoomPreference(18.0f);
-        /*mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                addLocationAlert(latLng.latitude, latLng.longitude);
-            }
-        });*/
-
         MarkerNaehern questMarkers = new MarkerNaehern();
         ArrayList<MarkerOptions> allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
         for (int i = 0; i < allMarkers.size(); i++) {
@@ -150,8 +109,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (int i = 0; i < allLatLng.size(); i++) {
             addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
         }
-
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
