@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/mapsasbackground">
+
+    <ImageView
+        android:id="@+id/chatbubble"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_chat_bubble_black_24dp_grey" />
+
+    <TextView
+        android:layout_width="240dp"
+        android:layout_height="200dp"
+        android:layout_alignParentRight="true"
+        android:padding="30dp"
+        android:text="@string/bubble_text"
+        android:textColor="@android:color/background_light" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieViewDino"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="185dp"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="dino_anim.json"
+        app:lottie_loop="true"
+        app:lottie_repeatCount="10" />
+
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="300dp"
+
+        android:orientation="vertical">
+
+        <ToggleButton
+            android:id="@+id/Answ1"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_rowWeight="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:background="@drawable/toggle_buttons"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textOff="test"
+            android:textOn="@string/answer_1" />
+
+        <ToggleButton
+            android:id="@+id/Answ2"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="0"
+            android:layout_rowWeight="1"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/toggle_buttons"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textOff="@string/answer_2"
+            android:textOn="@string/answer_2" />
+
+        <ToggleButton
+            android:id="@+id/Answ3"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_rowWeight="1"
+            android:layout_column="0"
+            android:layout_columnWeight="1"
+            android:background="@drawable/toggle_buttons"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textOff="@string/answer_3"
+            android:textOn="@string/answer_3" />
+
+        <ToggleButton
+            android:id="@+id/Answ4"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="1"
+            android:layout_rowWeight="1"
+            android:layout_column="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/toggle_buttons"
+            android:gravity="center"
+            android:textColor="#ffffff"
+            android:textOff="@string/answer_4"
+            android:textOn="@string/answer_4" />
+
+        <Button
+            android:id="@+id/check"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_row="3"
+            android:layout_rowWeight="1"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_gravity="fill_horizontal"
+            android:backgroundTint="@color/colorGreenFH"
+            android:text="@string/checkAnswer"
+            android:textColor="#ffffff" />
+    </GridLayout>
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/success"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="star_success_.json" />
+
+
+</RelativeLayout>
