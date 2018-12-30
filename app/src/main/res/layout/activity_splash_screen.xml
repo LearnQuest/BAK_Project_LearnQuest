@@ -4,9 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".splash_screen"
     android:background="@drawable/gradient"
-    >
+    android:theme="@style/AppTheme.NoActionBar"
+    tools:context=".splash_screen">
 
     <ImageView
         android:id="@+id/imageView"
@@ -15,6 +15,6 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="131dp"
-        app:srcCompat="@drawable/logo"
-        android:foregroundGravity="center"/>
+        android:foregroundGravity="center"
+        app:srcCompat="@drawable/logo" />
 </RelativeLayout>

@@ -28,6 +28,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -44,6 +45,9 @@ import java.util.ArrayList;
 public class Fragment_maps_class extends Fragment implements OnMapReadyCallback {
     private static final String TAG = "Maps_TaG";
     private GoogleMap mMap;
+    private MapView mView;
+    private View view;
+
     private static final int LOC_PERM_REQ_CODE = 1;
     //meters
     private static final int GEOFENCE_RADIUS = 2;
@@ -58,20 +62,37 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_maps, container, false);
 
-   SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-               .findFragmentById(R.id.map);
-       mapFragment.getMapAsync(new OnMapReadyCallback() {
-          @Override
+        view = inflater.inflate(R.layout.activity_maps, container, false);
+
+       /* SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+                .findFragmentById(R.id.map);
+
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
             public void onMapReady(GoogleMap googleMap) {
-                LatLng latLng = new LatLng(1.289545, 103.849972);
+
+                Toast.makeText(getContext(),"Test methode 1", Toast.LENGTH_LONG).show();
+                //LatLng latLng = new LatLng(1.289545, 103.849972);
                 googleMap.addMarker(new MarkerOptions().position(latLng)
                         .title("Singapore"));
                 googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
             }
         });
-       geofencingClient = LocationServices.getGeofencingClient(this);
+      geofencingClient = LocationServices.getGeofencingClient(getContext());*/
+
+        return view;
+    }
+    public void onViewCreated( View view,  Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mView = (MapView) view.findViewById(R.id.map);
+        if(mView != null){
+            mView.onCreate(null);
+            mView.onResume();
+            mView.getMapAsync(this);
+            geofencingClient = LocationServices.getGeofencingClient(getContext());
+        }
     }
 /*
     public void changeType(View view) {
@@ -82,6 +103,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
     }*/
 
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(getContext(),"Test methode 2", Toast.LENGTH_LONG).show();
         System.out.println("Hallo");
         mMap = googleMap;
         try {
@@ -100,12 +122,13 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
         LatLng fh = new LatLng(47.068990, 15.406672);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(fh, zoom);
         mMap.setLatLngBoundsForCameraTarget(fh_Gelaende);
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(fh_Gelaende, 0));
+        mMap.moveCamera(cameraUpdate);//(fh_Gelaende, 0));
         mMap.setMinZoomPreference(18.0f);
+        mMap.getUiSettings().setZoomGesturesEnabled(false);
         MarkerNaehern questMarkers = new MarkerNaehern();
         ArrayList<MarkerOptions> allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
         for (int i = 0; i < allMarkers.size(); i++) {
-            mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_position));
+            mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
         }
         ArrayList<LatLng> allLatLng = (ArrayList<LatLng>) questMarkers.getLatLng();
         for (int i = 0; i < allLatLng.size(); i++) {
@@ -123,7 +146,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
         }
         mMap.setMyLocationEnabled(true);
     }
-
     @SuppressLint("MissingPermission")
     private void showCurrentLocationOnMap() {
         if (isLocationAccessPermitted()) {
