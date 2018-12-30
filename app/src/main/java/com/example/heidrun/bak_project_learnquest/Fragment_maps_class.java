@@ -41,7 +41,7 @@ import com.google.android.gms.tasks.Task;
 import java.util.ArrayList;
 
 
-public class Fragment_maps_class extends Fragment {
+public class Fragment_maps_class extends Fragment implements OnMapReadyCallback {
     private static final String TAG = "Maps_TaG";
     private GoogleMap mMap;
     private static final int LOC_PERM_REQ_CODE = 1;
@@ -59,10 +59,11 @@ public class Fragment_maps_class extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.activity_maps, container, false);
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
+
+   SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
+               .findFragmentById(R.id.map);
+       mapFragment.getMapAsync(new OnMapReadyCallback() {
+          @Override
             public void onMapReady(GoogleMap googleMap) {
                 LatLng latLng = new LatLng(1.289545, 103.849972);
                 googleMap.addMarker(new MarkerOptions().position(latLng)
@@ -70,24 +71,25 @@ public class Fragment_maps_class extends Fragment {
                 googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
             }
         });
-        geofencingClient = LocationServices.getGeofencingClient(this);
+       geofencingClient = LocationServices.getGeofencingClient(this);
     }
-
+/*
     public void changeType(View view) {
         if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
             mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
         } else
             mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-    }
+    }*/
 
     public void onMapReady(GoogleMap googleMap) {
+        System.out.println("Hallo");
         mMap = googleMap;
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
-                            this, R.raw.maps_style));
+                            getContext(), R.raw.maps_style));
 
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
@@ -109,7 +111,7 @@ public class Fragment_maps_class extends Fragment {
         for (int i = 0; i < allLatLng.size(); i++) {
             addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
         }
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -132,7 +134,7 @@ public class Fragment_maps_class extends Fragment {
     }
 
     private boolean isLocationAccessPermitted() {
-        if (ContextCompat.checkSelfPermission(this,
+        if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
             return true;
@@ -142,7 +144,7 @@ public class Fragment_maps_class extends Fragment {
     }
 
     private void requestLocationAccessPermission() {
-        ActivityCompat.requestPermissions(this,
+        ActivityCompat.requestPermissions(getActivity(),
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 LOC_PERM_REQ_CODE);
     }
@@ -160,11 +162,11 @@ public class Fragment_maps_class extends Fragment {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(MapsActivity.this,
+                                Toast.makeText(getContext(),
                                         "Location alter has been added",
                                         Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(MapsActivity.this,
+                                Toast.makeText(getContext(),
                                         "Location alter could not be added",
                                         Toast.LENGTH_SHORT).show();
                             }
@@ -181,7 +183,7 @@ public class Fragment_maps_class extends Fragment {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     showCurrentLocationOnMap();
-                    Toast.makeText(MapsActivity.this,
+                    Toast.makeText(getContext(),
                             "Location access permission granted, you try " +
                                     "add or remove location alerts",
                             Toast.LENGTH_SHORT).show();
@@ -193,8 +195,8 @@ public class Fragment_maps_class extends Fragment {
     }
 
     private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(this, MapsActivity.class);
-        return PendingIntent.getService(this, 0, intent,
+        Intent intent = new Intent(getActivity(), Fragment_maps_class.class);
+        return PendingIntent.getService(getContext(), 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
