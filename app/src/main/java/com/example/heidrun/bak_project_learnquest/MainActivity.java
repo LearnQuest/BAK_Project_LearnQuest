@@ -13,8 +13,10 @@ public class MainActivity extends AppCompatActivity {
         //hi test this push function
 
         questionFragment frg = new questionFragment();
+       // getSupportFragmentManager().beginTransaction().add(R.id.container, frg).commit();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.container, frg).commit();
+        trophiesFragment troph = new trophiesFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.container, troph).commit();
 
     }
 
