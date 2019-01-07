@@ -12,8 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:name=".loginActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,7 +30,7 @@
             android:name=".MapsActivity"
             android:label="Map" />
         <activity android:name=".splash_screen" />
-        <activity android:name=".loginActivity"></activity>
+        <activity android:name=".MainActivity"></activity>
     </application>
 
 </manifest>

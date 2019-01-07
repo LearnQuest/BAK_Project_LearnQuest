@@ -144,7 +144,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         MarkerNaehern questMarkers = new MarkerNaehern();
         ArrayList<MarkerOptions> allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
         for (int i = 0; i < allMarkers.size(); i++) {
-            mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker_position));
+            mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.drachen_position));
         }
         ArrayList<LatLng> allLatLng = (ArrayList<LatLng>) questMarkers.getLatLng();
         for (int i = 0; i < allLatLng.size(); i++) {

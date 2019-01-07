@@ -1,80 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/hintergrund"
-    android:theme="@style/AppTheme.NoActionBar"
+    android:orientation="vertical"
     tools:context=".loginActivity">
 
 
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="293dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:background="#11000000"
+        android:drawableLeft="@drawable/lock"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="Password"
+        android:inputType="textPassword"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText3" />
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/cardview"
+        android:layout_width="293dp"
+        android:layout_height="59dp"
+        android:layout_below="@id/editText2"
+        android:layout_centerHorizontal="false"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:elevation="10dp"
+        android:onClick="onClickSwitchtoMain"
+        app:cardBackgroundColor="#C51162"
+        app:cardCornerRadius="25dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editText2">
+
+        <RelativeLayout
+            android:layout_width="277dp"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Login with e-Mail"
+                android:textColor="#fff"
+                android:textSize="18sp"
+                android:fontFamily="casual"/>
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="155dp"
+        android:layout_height="25dp"
+        android:layout_below="@id/cardview"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
+        android:text="Forgot Password?"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardview" />
+
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="250dp"
+        android:layout_width="match_parent"
+        android:layout_height="325dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="284dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/lq2" />
 
     <EditText
-        android:id="@+id/editText2"
-        android:layout_width="wrap_content"
-        android:layout_height="47dp"
-        android:layout_below="@+id/imageView2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="-250dp"
-        android:background="@android:color/background_light"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="E-Mail"
-        android:textAlignment="center" />
-
-    <EditText
         android:id="@+id/editText3"
-        android:layout_width="wrap_content"
-        android:layout_height="43dp"
-        android:layout_alignStart="@+id/editText2"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="144dp"
-        android:background="@android:color/background_light"
-        android:ems="10"
-        android:inputType="textPassword"
-        android:text="passwort"
-        android:textAlignment="center" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="236dp"
+        android:layout_width="293dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="42dp"
-        android:text="Login with E-mail"
-        android:textColor="@android:color/background_light"
-        tools:background="@color/colorPrimaryDark" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="8dp"
+        android:background="#11000000"
+        android:drawableLeft="@drawable/user"
+        android:ems="10"
+        android:fontFamily="casual"
+        android:hint="e-Mail"
+        android:inputType="textPersonName"
+        android:textSize="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="54dp"
-        android:layout_height="49dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="260dp"
-        android:layout_marginEnd="243dp"
-        app:srcCompat="@drawable/user" />
 
-    <ImageView
-        android:id="@+id/imageView4"
-        android:layout_width="48dp"
-        android:layout_height="42dp"
-        android:layout_alignStart="@+id/imageView3"
-        android:layout_alignBottom="@+id/editText3"
-        android:layout_marginStart="2dp"
-        android:layout_marginBottom="0dp"
-        app:srcCompat="@drawable/lock" />
 
-</RelativeLayout>
+</android.support.constraint.ConstraintLayout>
