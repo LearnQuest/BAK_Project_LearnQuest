@@ -13,9 +13,10 @@ public class loginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
     }
 
-   public void onClickSwitchtoMain(View view){
+    public void onClickSwitchtoMain(View view) {
         CardView cardView = (CardView) findViewById(R.id.cardview);
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);

@@ -1,5 +1,6 @@
 package com.example.heidrun.bak_project_learnquest;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,9 +10,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -51,8 +55,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.action_help:
-                Toast.makeText(this, "Help", Toast.LENGTH_SHORT).show();
+                final Dialog d = new Dialog(MainActivity.this);
+                d.setTitle("Help");
+                d.setContentView(R.layout.dialog_help);
+                d.show();
 
+                TextView tv= d.findViewById(R.id.textView7);
+                tv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                      d.cancel();
+                    }
+                });
             case R.id.action_logout:
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
 
