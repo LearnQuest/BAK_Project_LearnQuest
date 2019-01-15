@@ -30,7 +30,7 @@
             android:label="Map" />
         <activity android:name=".loginActivity" />
         <activity android:name=".MainActivity" />
-
+        <activity android:name=".chooseCharacter"></activity>
     </application>
 
 </manifest>

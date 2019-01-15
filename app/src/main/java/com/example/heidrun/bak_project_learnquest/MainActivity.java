@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,5 +89,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
+    public void onClickOpenDialogue(View view){
+        final Dialog f = new Dialog(MainActivity.this);
+        f.setTitle("Choose your character");
+        f.setContentView(R.layout.activity_choose_character);
+        f.show();
+       }
 }
 

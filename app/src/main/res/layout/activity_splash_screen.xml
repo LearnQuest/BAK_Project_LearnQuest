@@ -16,5 +16,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.303"
         app:srcCompat="@drawable/lq2" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/lottieRainbow"
+        android:layout_width="87dp"
+        android:layout_height="77dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView3"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="rainbow.json"
+        app:lottie_loop="true"
+        app:lottie_repeatCount="10" />
+
 </android.support.constraint.ConstraintLayout>

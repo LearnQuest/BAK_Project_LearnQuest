@@ -10,12 +10,15 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
+        android:id="@+id/imageUser"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="bottom|left"
         android:layout_weight="1"
         android:scaleType="fitEnd"
-        android:src="@mipmap/ic_launcher_round" />
+        android:src="@mipmap/ic_launcher_round"
+        android:onClick="onClickOpenDialogue"
+        />
 
 
     <TextView
