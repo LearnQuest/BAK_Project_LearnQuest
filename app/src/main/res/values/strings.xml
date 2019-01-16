@@ -1,5 +1,4 @@
 <resources>
-    <string name="app_name">BAK_Project_LearnQuest</string>
     <string name="normal_map">normal_map</string>
     <string name="hybrid_map">hybrid_map</string>
     <string name="satellite_map">satellite_map</string>
@@ -7,4 +6,12 @@
     <string name="title_activity_maps_test">Map</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="app_name">LearnQuest</string>
+    <string name="bubble_text">dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd</string>
+    <string name="answer_1">Answer 1</string>
+    <string name="answer_2">Answer 2</string>
+    <string name="answer_3">Answer 3</string>
+    <string name="answer_4">Answer 4</string>
+    <string name="checkAnswer">Check Answer!</string>
+    <string name="questionCounter">Fragenanzahl</string>
 </resources>
