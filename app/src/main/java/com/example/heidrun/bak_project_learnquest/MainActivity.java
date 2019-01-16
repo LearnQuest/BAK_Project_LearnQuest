@@ -70,6 +70,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 });
             case R.id.action_logout:
                 Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_subjects:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new subjectFragment()).commit();
+                break;
+            case R.id.nav_trophies:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new trophiesFragment()).commit();
+                break;
+
 
         }
         drawer.closeDrawer(GravityCompat.START);
