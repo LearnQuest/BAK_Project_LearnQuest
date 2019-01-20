@@ -2,6 +2,7 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -27,6 +28,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+        if (android.os.Build.VERSION.SDK_INT > 9)
+        {
+            StrictMode.ThreadPolicy policy = new
+                    StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
        // getSupportActionBar();

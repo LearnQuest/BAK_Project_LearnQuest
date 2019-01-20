@@ -13,11 +13,11 @@ import java.util.ArrayList;
 
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> implements View.OnClickListener {
 
-    private ArrayList<Subjects> dataSet;
+    private ArrayList<Subject> dataSet;
     Context mContext;
     ImageButton lastSelected;
 
-    public CustomAdapter(ArrayList<Subjects> data, Context context) {
+    public CustomAdapter(ArrayList<Subject> data, Context context) {
        // super(context, R.layout.listview_row, data);
         this.dataSet = data;
         this.mContext=context;
@@ -64,7 +64,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     public void onClick(View view) {
         int position=(Integer) view.getTag();
        // Object object= getItem(position);
-       // Subjects dataModel=(Subjects) object;
+       // Subject dataModel=(Subject) object;
 
         switch (view.getId())
         {
@@ -94,7 +94,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     /*@Override
     public View getView(int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
-        Subjects dataModel = getItem(position);
+        Subject dataModel = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
         ViewHolder viewHolder; // view lookup cache stored in tag
 
