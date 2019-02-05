@@ -12,7 +12,6 @@
         android:layout_width="225dp"
         android:layout_height="39dp"
         android:layout_marginTop="4dp"
-        android:fontFamily="casual"
         android:text="How does it work?"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
@@ -39,14 +38,13 @@
             android:layout_height="wrap_content"
             android:background="#11000000"
             android:ems="10"
-            android:fontFamily="casual"
             android:inputType="none"
-            android:textColor="@color/colorPrimaryDark"
             android:text="Das Ziel dieses Projektes ist es, eine Android-App zu entwickeln, welche beim
 Lernen unterstützen kann. Diese App ist ähnlich wie Pokemon Go, d.h. die
 StudentInnen gehen an bestimmte Orte (in unserem Campus) um Fragen zu
 entdecken und zu beantworten. Ein Belohnungssystem (To Be Defined) fördert die
-Erfolgserlebnisse der StudentInnen." />
+Erfolgserlebnisse der StudentInnen."
+            android:textColor="@color/colorPrimaryDark" />
     </ScrollView>
 
     <TextView
@@ -54,7 +52,6 @@ Erfolgserlebnisse der StudentInnen." />
         android:layout_width="185dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:fontFamily="casual"
         android:text="Got it!"
         android:textAlignment="center"
         android:textColor="#C51162"

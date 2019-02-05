@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,11 +30,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
-       // getSupportActionBar();
+        // getSupportActionBar();
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        // NullPointerException (!!!!????)
+        ImageView profile = findViewById(R.id.imageUser);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            int resId = bundle.getInt("resID");
+            profile.setImageResource(resId);
+
+        }
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -61,21 +71,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 d.setContentView(R.layout.dialog_help);
                 d.show();
 
-                TextView tv= d.findViewById(R.id.textView7);
+                TextView tv = d.findViewById(R.id.textView7);
                 tv.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                      d.cancel();
+                        d.cancel();
                     }
                 });
-            case R.id.action_logout:
-                Toast.makeText(this, "Logout", Toast.LENGTH_SHORT).show();
-                break;
             case R.id.nav_subjects:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new subjectFragment()).commit();
                 break;
             case R.id.nav_trophies:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new trophiesFragment()).commit();
+                break;
+            case R.id.action_logout:
+                Intent intent = new Intent(this, loginActivity.class);
+                startActivity(intent);
+                finish();
                 break;
 
 
@@ -97,11 +109,28 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, MapsActivity.class);
         startActivity(intent);
     }
-    public void onClickOpenDialogue(View view){
-        final Dialog f = new Dialog(MainActivity.this);
-        f.setTitle("Choose your character");
-        f.setContentView(R.layout.activity_choose_character);
-        f.show();
-       }
+
+    public void onClickOpenDialogue(View view) {
+        ImageView profile = findViewById(R.id.imageUser);
+        Intent intent = new Intent(this, chooseCharacter.class);
+        startActivity(intent);
+        /*
+        Button einhorn = f.findViewById(R.id.imageButtonEinhorn);
+        Button loewe = f.findViewById(R.id.imageButtonLoewe);
+        Button katze = f.findViewById(R.id.imageButtonKatze);
+        Button fuchs = f.findViewById(R.id.imageButtonFuchs);
+        ImageView profilbild = f.findViewById(R.id.imageUser);
+
+        if (einhorn.isSelected()) {
+            profilbild.setImageResource(R.drawable.einhorn_1);
+        } else if (loewe.isSelected()) {
+            profilbild.setImageResource(R.drawable.loewe);
+        } else if (katze.isSelected()) {
+            profilbild.setImageResource(R.drawable.katze_1);
+        } else if (fuchs.isSelected()) {
+            profilbild.setImageResource(R.drawable.fuchs);
+        }*/
+
+    }
 }
 

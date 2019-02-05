@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="200dp"
     android:layout_gravity="top"
-    android:background="@color/colorPrimary"
+    android:background="@drawable/hintergrund"
     android:orientation="vertical"
     android:padding="20dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -16,7 +16,7 @@
         android:layout_gravity="bottom|left"
         android:layout_weight="1"
         android:scaleType="fitEnd"
-        android:src="@mipmap/ic_launcher_round"
+        android:src="@drawable/loewe"
         android:onClick="onClickOpenDialogue"
         />
 
@@ -26,10 +26,12 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:text="Username"
+        android:textColor="#000000"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="email" />
+        android:text="email"
+        android:textColor="#000000"/>
 </LinearLayout>

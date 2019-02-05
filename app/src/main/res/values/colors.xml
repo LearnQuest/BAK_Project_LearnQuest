@@ -6,6 +6,6 @@
     <color name="colorSelected">#f4dc22</color>
 
     <color name="colorPrimary">#98e145</color>
-    <color name="colorPrimaryDark">#1b5e20</color>
-    <color name="colorAccent">#08590c</color>
+    <color name="colorPrimaryDark">#1a541e</color>
+    <color name="colorAccent">#0c7311</color>
 </resources>
