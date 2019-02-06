@@ -105,10 +105,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    public void onClickSwitchtoMaps(View view) {
-        Intent intent = new Intent(this, MapsActivity.class);
-        startActivity(intent);
-    }
+
 
     public void onClickOpenDialogue(View view) {
         ImageView profile = findViewById(R.id.imageUser);

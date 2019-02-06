@@ -326,7 +326,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             markerloc.setLongitude(marker.longitude);
 
             Log.i("XXXX", "test");
-            if (location.distanceTo(markerloc) < 5) {
+            if (location.distanceTo(markerloc) < 10) {
                 Toast.makeText(getContext(), "Marker in der Nähe" + i, Toast.LENGTH_SHORT).show();
             }
         }
