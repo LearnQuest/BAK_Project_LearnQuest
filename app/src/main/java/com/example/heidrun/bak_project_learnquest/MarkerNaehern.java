@@ -69,6 +69,7 @@ public void createAllLatLng(){
     allMarkersLatLng.add(new LatLng(47.069127, 15.408626));
     allMarkersLatLng.add(new LatLng(47.069160, 15.409731));
     allMarkersLatLng.add(new LatLng(47.069599, 15.407488));
+    allMarkersLatLng.add(new LatLng(47.069071, 15.405823));
 }
 
 public ArrayList createMarkers(){

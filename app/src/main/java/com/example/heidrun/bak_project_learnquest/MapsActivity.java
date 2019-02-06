@@ -4,9 +4,14 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Color;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -19,9 +24,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -29,6 +37,8 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -39,21 +49,26 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, ResultCallback<Status>, LocationListener {
 
     private static final String TAG = "Maps_TaG";
     private GoogleMap mMap;
     private static final int LOC_PERM_REQ_CODE = 1;
     //meters
-    private static final int GEOFENCE_RADIUS = 2;
+    private static final int GEOFENCE_RADIUS = 150;
     //in milli seconds
     private static final int GEOFENCE_EXPIRATION = 6000;
     private GeofencingClient geofencingClient;
+
+    //ProbeMarker
+    Marker geof;
+
 
     float zoom = 18.0f;
     private LatLngBounds fh_Gelaende = new LatLngBounds(
             new LatLng(47.068679, 15.405647), new LatLng(47.070013, 15.410073));
 
+    ArrayList<MarkerOptions> allMarkers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +81,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         geofencingClient = LocationServices.getGeofencingClient(this);
 
 
+
     }
+
 
 
     /**
@@ -117,6 +134,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        //   mMap.setOnMarkerClickListener((GoogleMap.OnMarkerClickListener) this);
+        //  mMap.setOnMapClickListener((GoogleMap.OnMapClickListener) this);
+        // mMap.setOnMyLocationChangeListener(this);
+
+
         try {
             // Customise the styling of the base map using a JSON object defined
             // in a raw resource file.
@@ -144,11 +166,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         });*/
 
 
-
         MarkerNaehern questMarkers = new MarkerNaehern();
-        ArrayList<MarkerOptions> allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
+        allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
         for (int i = 0; i < allMarkers.size(); i++) {
             mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.drachen_position));
+
+            if (i == allMarkers.size() - 1) {
+                MarkerOptions om = new MarkerOptions()
+                        .position(new LatLng(47.069071, 15.405823))
+                        .title("Test Geofencing Marker");
+                geof = mMap.addMarker(om);
+            }
         }
         ArrayList<LatLng> allLatLng = (ArrayList<LatLng>) questMarkers.getLatLng();
         for (int i = 0; i < allLatLng.size(); i++) {
@@ -168,7 +196,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
         mMap.setMyLocationEnabled(true);
 
-       }
+    }
 
 
     @SuppressLint("MissingPermission")
@@ -209,13 +237,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(MapsActivity.this,
-                                        "Location alter has been added",
-                                        Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(MapsActivity.this,
+                                // "Location alter has been added",
+                                //   Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(MapsActivity.this,
-                                        "Location alter could not be added",
-                                        Toast.LENGTH_SHORT).show();
+                                //  Toast.makeText(MapsActivity.this,
+                                //"Location alter could not be added",
+                                // Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -242,6 +270,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private PendingIntent getGeofencePendingIntent() {
+
         Intent intent = new Intent(this, MapsActivity.class);
         return PendingIntent.getService(this, 0, intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
@@ -264,4 +293,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .setLoiteringDelay(2000)
                 .build();
     }
+
+    Circle geoFenceLimits;
+
+    @Override
+    public void onResult(@NonNull Status status) {
+        if (geoFenceLimits != null) {
+            geoFenceLimits.remove();
+        }
+
+        CircleOptions cp = new CircleOptions()
+                .center(geof.getPosition())
+                .strokeColor(Color.argb(50, 70, 70, 70))
+                .fillColor(Color.argb(100, 150, 150, 150))
+                .radius(400f);
+
+        geoFenceLimits = mMap.addCircle(cp);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+    }
+
+
+
+    //neu
 }

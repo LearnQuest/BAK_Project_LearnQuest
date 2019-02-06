@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <service android:name=".LocationAlertIntentService"
+            android:enabled="true"
+            android:exported="true"></service>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
@@ -31,6 +33,7 @@
         <activity android:name=".loginActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".chooseCharacter"></activity>
+        <!--<service android:name=".GeofenceTransitionsIntentService"/>-->
     </application>
 
 </manifest>

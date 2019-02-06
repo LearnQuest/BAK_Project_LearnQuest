@@ -4,9 +4,13 @@ package com.example.heidrun.bak_project_learnquest;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,9 +25,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,23 +44,28 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 
-public class Fragment_maps_class extends Fragment implements OnMapReadyCallback {
+public class Fragment_maps_class extends Fragment implements OnMapReadyCallback, LocationListener {
     private static final String TAG = "Maps_TaG";
     private GoogleMap mMap;
     private MapView mView;
     private View view;
+    LocationManager loc;
+    ArrayList<MarkerOptions> allMarkers;
 
     private static final int LOC_PERM_REQ_CODE = 1;
     //meters
-    private static final int GEOFENCE_RADIUS = 2;
+    private static final int GEOFENCE_RADIUS = 150;
     //in milli seconds
     private static final int GEOFENCE_EXPIRATION = 6000;
     private GeofencingClient geofencingClient;
+
+    private FusedLocationProviderClient mFusedLocationClient;
 
     float zoom = 18.0f;
     private LatLngBounds fh_Gelaende = new LatLngBounds(
@@ -81,14 +92,41 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
             }
         });
       geofencingClient = LocationServices.getGeofencingClient(getContext());*/
+        //initializeLocManager();
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+
+                            Toast.makeText(getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                            CheckDistance(location);
+                        }
+                    }
+                });
 
         return view;
     }
-    public void onViewCreated( View view,  Bundle savedInstanceState) {
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         mView = (MapView) view.findViewById(R.id.map);
-        if(mView != null){
+        if (mView != null) {
             mView.onCreate(null);
             mView.onResume();
             mView.getMapAsync(this);
@@ -104,7 +142,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
     }*/
 
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(),"Test methode 2", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Test methode 2", Toast.LENGTH_LONG).show();
         System.out.println("Hallo");
         mMap = googleMap;
         try {
@@ -127,7 +165,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
         mMap.setMinZoomPreference(18.0f);
         mMap.getUiSettings().setZoomGesturesEnabled(false);
         MarkerNaehern questMarkers = new MarkerNaehern();
-        ArrayList<MarkerOptions> allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
+        allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
         for (int i = 0; i < allMarkers.size(); i++) {
             mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
         }
@@ -154,7 +192,10 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
             return;
         }
         mMap.setMyLocationEnabled(true);
+
+
     }
+
     @SuppressLint("MissingPermission")
     private void showCurrentLocationOnMap() {
         if (isLocationAccessPermitted()) {
@@ -193,13 +234,13 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(getContext(),
-                                        "Location alter has been added",
-                                        Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getContext(),
+                                // "Location alter hasfdgsdfgs been added",
+                                //Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getContext(),
-                                        "Location alter could not be added",
-                                        Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getContext(),
+                                //  "Location alter could not be added",
+                                // Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -247,5 +288,47 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
                         Geofence.GEOFENCE_TRANSITION_DWELL)
                 .setLoiteringDelay(2000)
                 .build();
+    }
+
+    private void initializeLocManager() {
+        this.loc = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        Criteria c = new Criteria();
+        String h = loc.getBestProvider(c, false);
+
+
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        //Location loca = loc.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Task<Location> loca = LocationServices.getFusedLocationProviderClient(getContext()).getLastLocation();
+        if(loca != null){
+            onLocationChanged(loca.getResult());
+
+        }
+    }
+    @Override
+        public void onLocationChanged(Location location) {
+
+        }
+
+    private void CheckDistance(Location location){
+        for (int i = 0; i < allMarkers.size(); i++) {
+            LatLng marker = allMarkers.get(i).getPosition();
+            Location markerloc = new Location("marker");
+            markerloc.setLatitude(marker.latitude);
+            markerloc.setLongitude(marker.longitude);
+
+            Log.i("XXXX", "test");
+            if (location.distanceTo(markerloc) < 5) {
+                Toast.makeText(getContext(), "Marker in der Nähe" + i, Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
