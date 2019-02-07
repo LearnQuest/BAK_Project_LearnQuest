@@ -103,9 +103,10 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            return null;
+            requestLocationAccessPermission();
+            //return null;
         }
-        mFusedLocationClient.getLastLocation()
+        /*mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                     @Override
                     public void onSuccess(Location location) {
@@ -117,7 +118,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                             CheckDistance(location);
                         }
                     }
-                });
+                });*/
 
         return view;
     }
@@ -192,6 +193,18 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             return;
         }
         mMap.setMyLocationEnabled(true);
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            Toast.makeText(getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                            CheckDistance(location);
+                        }
+                    }
+                });
 
 
     }
@@ -316,6 +329,8 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     @Override
         public void onLocationChanged(Location location) {
 
+
+        Toast.makeText(getContext(), " onchanged", Toast.LENGTH_SHORT).show();
         }
 
     private void CheckDistance(Location location){

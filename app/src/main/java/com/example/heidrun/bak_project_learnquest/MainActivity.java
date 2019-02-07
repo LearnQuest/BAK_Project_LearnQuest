@@ -36,26 +36,27 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // NullPointerException (!!!!????)
-        ImageView profile = findViewById(R.id.imageUser);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            int resId = bundle.getInt("resID");
-            profile.setImageResource(resId);
-
-        }
-
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        // NullPointerException (!!!!????)
+        /*ImageView profile = findViewById(R.id.imageUser);
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            int resId = bundle.getInt("resId");
+            System.out.println(resId);
+            profile.setImageResource(resId);
+        }*/
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new Fragment_maps_class()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
-
     }
+
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -106,11 +107,29 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-
     public void onClickOpenDialogue(View view) {
-        ImageView profile = findViewById(R.id.imageUser);
+        /*ImageView profile = findViewById(R.id.imageUser);
         Intent intent = new Intent(this, chooseCharacter.class);
-        startActivity(intent);
+        startActivity(intent);*/
+
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.activity_choose_character);
+        dialog.setTitle("Chosse your Character...");
+
+        ImageButton loewe = dialog.findViewById(R.id.loewe);
+        // if button is clicked, close the custom dialog
+        loewe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ImageView) findViewById(R.id.imageUser)).setImageResource(R.drawable.fuchs);
+                ((ImageView) findViewById(R.id.imageUser)).invalidate();
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+
         /*
         Button einhorn = f.findViewById(R.id.imageButtonEinhorn);
         Button loewe = f.findViewById(R.id.imageButtonLoewe);
