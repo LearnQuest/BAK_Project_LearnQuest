@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,10 +18,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private Dialog chooseCharacterDialog;
     private DrawerLayout drawer;
 
     @Override
@@ -28,15 +32,24 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
+
         // getSupportActionBar();
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        LinearLayout navHeader = findViewById(R.id.nav_header_layout);
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+          public void onDrawerSlide(View drawerView, float slideOffset){
+              ((ImageView)((LinearLayout)(findViewById(R.id.nav_header_layout))).findViewById(R.id.imageUser)).setImageResource(MySharedPreference.getPrefImage(getBaseContext()));
+
+          }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -54,8 +67,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new Fragment_maps_class()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
-    }
 
+        chooseCharacterDialog = new Dialog(this);
+        chooseCharacterDialog.setContentView(R.layout.activity_choose_character);
+
+    }
 
 
     @Override
@@ -112,23 +128,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Intent intent = new Intent(this, chooseCharacter.class);
         startActivity(intent);*/
 
-        // custom dialog
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.activity_choose_character);
-        dialog.setTitle("Chosse your Character...");
-
-        ImageButton loewe = dialog.findViewById(R.id.loewe);
-        // if button is clicked, close the custom dialog
-        loewe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((ImageView) findViewById(R.id.imageUser)).setImageResource(R.drawable.fuchs);
-                ((ImageView) findViewById(R.id.imageUser)).invalidate();
-                dialog.dismiss();
-            }
-        });
-
-        dialog.show();
+        chooseCharacterDialog.show();
 
         /*
         Button einhorn = f.findViewById(R.id.imageButtonEinhorn);
@@ -146,7 +146,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if (fuchs.isSelected()) {
             profilbild.setImageResource(R.drawable.fuchs);
         }*/
+    }
 
+    public void onClickChangeProfile(View view) {
+        int imageID;
+        switch (view.getId()) {
+            case R.id.loewe:
+                imageID = R.drawable.loewe;
+                break;
+            case R.id.fuchs:
+                imageID = R.drawable.fuchs;
+                break;
+            case R.id.katze:
+                imageID = R.drawable.katze_1;
+                break;
+            case R.id.einhorn:
+                imageID = R.drawable.einhorn_1;
+                break;
+            default:
+                imageID = R.drawable.drachen_position;
+                break;
+        }
+        ((ImageView) findViewById(R.id.imageUser)).setImageResource(imageID);
+        MySharedPreference.setPrefImage(this,imageID);
+
+        ((ImageView) findViewById(R.id.imageUser)).invalidate();
+        chooseCharacterDialog.dismiss();
     }
 }
 

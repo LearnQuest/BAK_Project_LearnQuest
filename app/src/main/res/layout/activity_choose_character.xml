@@ -5,32 +5,71 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/hintergrund"
-    tools:context=".chooseCharacter">
-
+    tools:context=".MainActivity">
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:text="Choose yout Charakter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.099"
+        android:layout_width="245dp"
+        android:layout_height="36dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="casual"
+        android:text="Choose you character"
+        android:textAlignment="center"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="20dp"
-        />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/loewe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="148dp"
+    <android.support.v7.widget.GridLayout
+        android:layout_width="306dp"
+        android:layout_height="82dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/loewe"
-        android:onClick="onClickChangeProfile"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <ImageButton
+            android:id="@+id/einhorn"
+            android:layout_width="78dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:onClick="onClickChangeProfile"
+            app:srcCompat="@drawable/einhorn_1" />
+
+        <ImageButton
+            android:id="@+id/loewe"
+            android:layout_width="78dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:layout_column="1"
+            app:layout_row="0"
+            android:onClick="onClickChangeProfile"
+            app:srcCompat="@drawable/loewe" />
+
+        <ImageButton
+            android:id="@+id/katze"
+            android:layout_width="73dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:layout_column="2"
+            app:layout_row="0"
+            android:onClick="onClickChangeProfile"
+            app:srcCompat="@drawable/katze_1" />
+
+        <ImageButton
+            android:id="@+id/fuchs"
+            android:layout_width="78dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:layout_column="3"
+            app:layout_row="0"
+            android:onClick="onClickChangeProfile"
+            app:srcCompat="@drawable/fuchs" />
+
+    </android.support.v7.widget.GridLayout>
 </android.support.constraint.ConstraintLayout>
