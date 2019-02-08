@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,20 +33,16 @@ public class subjectFragment extends Fragment {
         mRecyclerView=(RecyclerView) view.findViewById(R.id.idRecyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        dataModels= new ArrayList<>();
-        dataModels.add(new Subjects("DBS01"));
-        dataModels.add(new Subjects("DBS02"));
-        dataModels.add(new Subjects("SWE01"));
-        dataModels.add(new Subjects("SWE02"));
-        dataModels.add(new Subjects("DBS03"));
-        dataModels.add(new Subjects("DBS04"));
-        dataModels.add(new Subjects("SWE03"));
-        dataModels.add(new Subjects("SWE04"));
-        dataModels.add(new Subjects("Test"));
-        dataModels.add(new Subjects("Test"));
-        dataModels.add(new Subjects("TEst"));
-        dataModels.add(new Subjects("test"));
-        dataModels.add(new Subjects("TEST"));
+        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity().getApplicationContext());
+        databaseAccess.open();
+
+        dataModels = new ArrayList<Subjects>();
+        for(String s :databaseAccess.getSubjects()){
+            Log.i("XXXX",s);
+            if(s!= null){
+            dataModels.add(new Subjects(s));}
+        }
+
 
         adapter= new CustomAdapter(dataModels, getContext());
 
@@ -64,4 +61,7 @@ public class subjectFragment extends Fragment {
 */
         return view;
     }
+
+
+
 }

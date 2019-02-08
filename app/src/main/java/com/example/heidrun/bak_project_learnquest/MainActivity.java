@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View parentLayout = findViewById(android.R.id.content);
-        Snackbar.make(parentLayout, "Login war erfolgreich!", Snackbar.LENGTH_LONG)
-                .setAction("No action", null).show();
+       // Snackbar.make(parentLayout, "Login war erfolgreich!", Snackbar.LENGTH_LONG)
+       //         .setAction("No action", null).show();
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
@@ -41,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        //Datenbank öffnen
+
 
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -92,7 +95,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+                Intent intent = new Intent(this, MainActivity.class);
+
+                startActivity(intent);
         }
     }
 

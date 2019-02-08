@@ -124,10 +124,13 @@ public class loginActivity extends AppCompatActivity {
     }
 
     private void LoginProcedure(View view){
+        successfulLogin = true;
         if (successfulLogin) {
 
             Intent intent = new Intent(this, MainActivity.class);
+
             startActivity(intent);
+
 
         } else {
             Snackbar.make(view, "Login ist fehlgeschlagen! Bitte die Eingabe überprüfen!", Snackbar.LENGTH_LONG)
