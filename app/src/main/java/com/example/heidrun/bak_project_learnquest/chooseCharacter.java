@@ -21,70 +21,15 @@ public class chooseCharacter extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_character);
-      /*
-        e.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                image = (ImageView) findViewById(R.id.imageUser);
-                image.setImageDrawable(getResources().getDrawable(R.drawable.einhorn_1));
-            }
-        });
-        ImageButton f = findViewById(R.id.imageButtonFuchs);
-        f.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-                System.out.println("hier");
-                image.setImageResource(R.drawable.fuchs);
-            }
-        });
-        ImageButton l = findViewById(R.id.imageButtonLoewe);
-        l.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                image = (ImageView) findViewById(R.id.imageUser);
-                image.setImageResource(R.drawable.loewe);
-            }
-        });
-        ImageButton k = findViewById(R.id.imageButtonKatze);
-        k.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                image = (ImageView) findViewById(R.id.imageUser);
-                image.setImageResource(R.drawable.katze_1);
-            }
-        });*/
     }
 
     public void onClickChangeProfile(View view) {
 
         Intent i = new Intent(chooseCharacter.this, MainActivity.class);
-        i.putExtra("resId",R.drawable.loewe);
+        i.putExtra("resId", R.drawable.loewe);
         startActivity(i);
-        /*ImageView profile = (ImageView) view.findViewById(R.id.imageUser);
-        System.out.println("Hello");
-        profile.setImageResource(R.drawable.loewe);*/
+
     }
 
-   /* public void onClickEinhorn(View view) {
-        System.out.println("HIHI");
-
-        image = (ImageView) findViewById(R.id.imageUser);
-        image.setImageResource(R.drawable.einhorn_1);
-    }
-
-    public void onClickfuchs(View view) {
-        ImageView profile = findViewById(R.id.imageUser);
-        profile.setImageResource(R.drawable.fuchs);
-    }
-
-    public void onClickloewe(View view) {
-        ImageView profile = findViewById(R.id.imageUser);
-        profile.setImageResource(R.drawable.loewe);
-    }
-
-    public void onClickkatze(View view) {
-        ImageView profile = findViewById(R.id.imageUser);
-        profile.setImageResource(R.drawable.katze_1);
-    }*/
 }

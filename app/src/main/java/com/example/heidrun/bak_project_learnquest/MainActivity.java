@@ -53,15 +53,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // NullPointerException (!!!!????)
-        /*ImageView profile = findViewById(R.id.imageUser);
-        Bundle bundle = getIntent().getExtras();
-        if (bundle != null) {
-            int resId = bundle.getInt("resId");
-            System.out.println(resId);
-            profile.setImageResource(resId);
-        }*/
-
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     new Fragment_maps_class()).commit();
@@ -124,28 +115,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
 
     public void onClickOpenDialogue(View view) {
-        /*ImageView profile = findViewById(R.id.imageUser);
-        Intent intent = new Intent(this, chooseCharacter.class);
-        startActivity(intent);*/
-
         chooseCharacterDialog.show();
 
-        /*
-        Button einhorn = f.findViewById(R.id.imageButtonEinhorn);
-        Button loewe = f.findViewById(R.id.imageButtonLoewe);
-        Button katze = f.findViewById(R.id.imageButtonKatze);
-        Button fuchs = f.findViewById(R.id.imageButtonFuchs);
-        ImageView profilbild = f.findViewById(R.id.imageUser);
 
-        if (einhorn.isSelected()) {
-            profilbild.setImageResource(R.drawable.einhorn_1);
-        } else if (loewe.isSelected()) {
-            profilbild.setImageResource(R.drawable.loewe);
-        } else if (katze.isSelected()) {
-            profilbild.setImageResource(R.drawable.katze_1);
-        } else if (fuchs.isSelected()) {
-            profilbild.setImageResource(R.drawable.fuchs);
-        }*/
     }
 
     public void onClickChangeProfile(View view) {
@@ -164,7 +136,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageID = R.drawable.einhorn_1;
                 break;
             default:
-                imageID = R.drawable.drachen_position;
+                imageID = R.drawable.userdefault;
                 break;
         }
         ((ImageView) findViewById(R.id.imageUser)).setImageResource(imageID);

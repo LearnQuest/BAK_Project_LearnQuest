@@ -1,5 +1,7 @@
 package com.example.heidrun.bak_project_learnquest;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -45,7 +48,38 @@ public class questionFragment extends Fragment implements View.OnClickListener {
         check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                lottieView.setVisibility(View.VISIBLE);
+                //lottieView.setVisibility(View.VISIBLE);
+
+                //wenn Antwort richtig:
+              /*  final Dialog d = new Dialog(getContext());
+                d.setTitle("Help");
+                d.setContentView(R.layout.succsessdialog);
+                d.show();
+
+                TextView next = d.findViewById(R.id.next);
+                next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });*/
+
+                //wenn Antwort falsch
+                final Dialog d = new Dialog(getContext());
+                d.setTitle("Help");
+                d.setContentView(R.layout.lossdialog);
+                d.show();
+
+                TextView next = d.findViewById(R.id.tryAgain);
+                next.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getContext(), MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+
             }
         });
 
