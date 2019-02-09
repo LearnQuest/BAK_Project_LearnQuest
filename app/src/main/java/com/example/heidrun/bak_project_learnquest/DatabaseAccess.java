@@ -45,9 +45,12 @@ public class DatabaseAccess {
         return arrSub;
     }
 
-    public ArrayList<Question> getQuestion(){
+    public ArrayList<Question> getQuestion(String fach){
         ArrayList<Question> arrQ = new ArrayList<Question>();
-        c = db.rawQuery("select * from fragen", null);
+        c = db.rawQuery("select Fach_ID from fach where Fach='" + fach + "'",null);
+        c.moveToNext();
+        int f_id = c.getInt(c.getColumnIndex("Fach_ID"));
+        c = db.rawQuery("select * from fragen where Fach_ID='" + f_id +"' ", null);
 
         while(c.moveToNext()){
             Question q = new Question();
@@ -56,9 +59,23 @@ public class DatabaseAccess {
             q.a2 = c.getString(c.getColumnIndex("Antwort2"));
             q.a3 = c.getString(c.getColumnIndex("Antwort3"));
             q.a4 = c.getString(c.getColumnIndex("Antwort4"));
+
             arrQ.add(q);
         }
         return arrQ;
+    }
+
+    public int getQuestionCounter(String fach){
+        int counter=0;
+        c = db.rawQuery("select Fach_ID from fach where Fach='" + fach + "'",null);
+        c.moveToNext();
+        int f_id = c.getInt(c.getColumnIndex("Fach_ID"));
+
+        c = db.rawQuery("select Fach_ID from fragen where Fach_ID='" + f_id + "'", null);
+        c.moveToNext();
+        counter = c.getCount();
+
+        return counter;
     }
 
 

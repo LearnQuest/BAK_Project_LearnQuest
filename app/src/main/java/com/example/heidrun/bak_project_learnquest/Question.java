@@ -1,6 +1,8 @@
 package com.example.heidrun.bak_project_learnquest;
 
-public class Question {
+import java.io.Serializable;
+
+public class Question implements Serializable {
 
     String question;
     String a1;

@@ -4,10 +4,18 @@ package com.example.heidrun.bak_project_learnquest;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -21,9 +29,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingClient;
 import com.google.android.gms.location.GeofencingRequest;
+
+
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -38,27 +57,42 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
 
-public class Fragment_maps_class extends Fragment implements OnMapReadyCallback {
+public class Fragment_maps_class extends Fragment implements OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
+
     private static final String TAG = "Maps_TaG";
+    private static final long INTERVAL = 10 * 60 * 1;
+    private static final long FASTEST_INTERVAL = 10 * 60 * 1;
     private GoogleMap mMap;
     private MapView mView;
     private View view;
+    LocationManager loc;
+    ArrayList<MarkerOptions> allMarkers;
 
     private static final int LOC_PERM_REQ_CODE = 1;
     //meters
-    private static final int GEOFENCE_RADIUS = 2;
+    private static final int GEOFENCE_RADIUS = 150;
     //in milli seconds
     private static final int GEOFENCE_EXPIRATION = 6000;
     private GeofencingClient geofencingClient;
 
+    private FusedLocationProviderClient mFusedLocationClient;
+
     float zoom = 18.0f;
     private LatLngBounds fh_Gelaende = new LatLngBounds(
             new LatLng(47.068679, 15.405647), new LatLng(47.070013, 15.410073));
+
+    //neuer Versuch
+    LocationRequest mLocationRequest;
+    GoogleApiClient mGoogleApiClient;
+    Location mCurrentLocation;
+
 
     @Nullable
     @Override
@@ -66,72 +100,127 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
 
         view = inflater.inflate(R.layout.activity_maps, container, false);
 
-       /* SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
-                .findFragmentById(R.id.map);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
-        mapFragment.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
 
-                Toast.makeText(getContext(),"Test methode 1", Toast.LENGTH_LONG).show();
-                //LatLng latLng = new LatLng(1.289545, 103.849972);
-                googleMap.addMarker(new MarkerOptions().position(latLng)
-                        .title("Singapore"));
-                googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-            }
-        });
-      geofencingClient = LocationServices.getGeofencingClient(getContext());*/
+        if (getArguments() != null) {
+            ArrayList<Question> ArrQuestion = (ArrayList<Question>)getArguments().getSerializable("questions");
+            if(ArrQuestion != null){
+                Toast.makeText(getContext(), String.valueOf(ArrQuestion.size()), Toast.LENGTH_SHORT).show();
+           }
 
+        }
+        //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            //
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            requestLocationAccessPermission();
+            //return null;
+        }//else fehlt!!
+
+
+        //Verschoben auf : onMapReady
+        /*mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+
+                            Toast.makeText(getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                            CheckDistance(location);
+                        }
+                    }
+                });*/
+        createLocationRequest();
+        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                .addApi(LocationServices.API)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .build();
+
+        mGoogleApiClient.connect();
         return view;
+
     }
-    public void onViewCreated( View view,  Bundle savedInstanceState) {
+
+    protected void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        //hier weise ich auf Layout zurück
         mView = (MapView) view.findViewById(R.id.map);
-        if(mView != null){
+        if (mView != null) {
             mView.onCreate(null);
             mView.onResume();
             mView.getMapAsync(this);
             geofencingClient = LocationServices.getGeofencingClient(getContext());
         }
-    }
-/*
-    public void changeType(View view) {
-        if (mMap.getMapType() == GoogleMap.MAP_TYPE_NORMAL) {
-            mMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        } else
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-    }*/
+        LocationCallback lc = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                Log.d(TAG, "onLocationResult");
+                onLocationChanged(locationResult.getLastLocation());
+            }
+        };
 
+    }
+
+    //Wenn Maps = da und angezeigt werden kann
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(),"Test methode 2", Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), "Test methode 2", Toast.LENGTH_LONG).show();
         System.out.println("Hallo");
         mMap = googleMap;
         try {
-            // Customise the styling of the base map using a JSON object defined
-            // in a raw resource file.
+            // Hier weise ich unsere App einen angepassten Maps Style zu (JSON-Datein aus Raw-Folder)
             boolean success = googleMap.setMapStyle(
                     MapStyleOptions.loadRawResourceStyle(
                             getContext(), R.raw.maps_style));
-
+            //Falls dies nicht erfolgreich verläuft:
             if (!success) {
                 Log.e(TAG, "Style parsing failed.");
             }
+            //Falls keine JSON-Datei = vorhanden
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
+
+        //Hier zoome ich auf den Fh-Campus hin (erstelle also einen neuen LatLng)
         LatLng fh = new LatLng(47.068990, 15.406672);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(fh, zoom);
+
+        //Ich beschränke die Maps auf den Fh-Campus
         mMap.setLatLngBoundsForCameraTarget(fh_Gelaende);
         mMap.moveCamera(cameraUpdate);//(fh_Gelaende, 0));
         mMap.setMinZoomPreference(18.0f);
+        //User kann ab hier nicht mehr reiin/raus zoomen
         mMap.getUiSettings().setZoomGesturesEnabled(false);
+
+        //hier erstelle ich ein Objekt meiner Klasse Marker, welche mehrere LatLng beinhaltet
+        //an welche ich Marker setzen möchte
         MarkerNaehern questMarkers = new MarkerNaehern();
-        ArrayList<MarkerOptions> allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
+
+        //Ich weise einer Arraylist meine LatLngs zu und mit Hilfe einer Schleife
+        //setzte ich an all diesen LatLngs einen Marker
+        allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
         for (int i = 0; i < allMarkers.size(); i++) {
             mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
         }
 
+        //Bei Marker-click öffnet sich hier nun das Question-Fragment
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -139,6 +228,8 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
                 return false;
             }
         });
+
+        //Hier möchte ich zu jedem Marker einen LocationAlert zuweisen
         ArrayList<LatLng> allLatLng = (ArrayList<LatLng>) questMarkers.getLatLng();
         for (int i = 0; i < allLatLng.size(); i++) {
             addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
@@ -153,8 +244,27 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
+        //Hier "aktivere" ich die Anzeige des Standorts (der Zugang dazu wird natürlich abgefragt)
         mMap.setMyLocationEnabled(true);
+
+        //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
+        //und füge einen Listener hinzu, der meine letzte Position "ermittelt"
+        mFusedLocationClient.getLastLocation()
+                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        // Got last known location. In some rare situations this can be null.
+                        if (location != null) {
+                            // Logic to handle location object
+                            Toast.makeText(getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+                            CheckDistance(location);
+                        }
+                    }
+                });
+
+
     }
+
     @SuppressLint("MissingPermission")
     private void showCurrentLocationOnMap() {
         if (isLocationAccessPermitted()) {
@@ -164,6 +274,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
         }
     }
 
+    //Überprüft ob pPositionsAbruf für App erlaubt ist
     private boolean isLocationAccessPermitted() {
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -174,12 +285,14 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
         }
     }
 
+    //Fragt ob Permission zum Standort gegeben ist
     private void requestLocationAccessPermission() {
         ActivityCompat.requestPermissions(getActivity(),
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 LOC_PERM_REQ_CODE);
     }
 
+    //Eigentlich nicht mehr notwendig!! Da kein Geofencing!
     @SuppressLint("MissingPermission")
     private void addLocationAlert(double lat, double lng) {
         if (isLocationAccessPermitted()) {
@@ -193,13 +306,13 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                Toast.makeText(getContext(),
-                                        "Location alter has been added",
-                                        Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getContext(),
+                                // "Location alter hasfdgsdfgs been added",
+                                //Toast.LENGTH_SHORT).show();
                             } else {
-                                Toast.makeText(getContext(),
-                                        "Location alter could not be added",
-                                        Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getContext(),
+                                //  "Location alter could not be added",
+                                // Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -248,4 +361,62 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback 
                 .setLoiteringDelay(2000)
                 .build();
     }
+
+
+    private void CheckDistance(Location location) {
+        for (int i = 0; i < allMarkers.size(); i++) {
+            LatLng marker = allMarkers.get(i).getPosition();
+            Location markerloc = new Location("markerpos");
+            markerloc.setLatitude(marker.latitude);
+            markerloc.setLongitude(marker.longitude);
+
+            if (location.distanceTo(markerloc) < 10) {
+                Toast.makeText(getContext(), "Marker in der Nähe" + i, Toast.LENGTH_SHORT).show();
+            }else{
+                Log.i("XXXX", "fail Marker " + i);
+            }
+        }
+    }
+
+
+
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        startLocationUpdates();
+    }
+
+    protected void startLocationUpdates() {
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
+                mGoogleApiClient,mLocationRequest, this);
+        Log.d(TAG, "Location update started ..............: ");
+    }
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        CheckDistance(location);
+    }
+
+
+
 }

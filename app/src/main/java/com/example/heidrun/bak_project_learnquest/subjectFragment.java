@@ -24,7 +24,6 @@ public class subjectFragment extends Fragment {
     ArrayList<Subjects> dataModels;
     private static CustomAdapter adapter;
 
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +37,6 @@ public class subjectFragment extends Fragment {
 
         dataModels = new ArrayList<Subjects>();
         for(String s :databaseAccess.getSubjects()){
-            Log.i("XXXX",s);
             if(s!= null){
             dataModels.add(new Subjects(s));}
         }
@@ -47,6 +45,7 @@ public class subjectFragment extends Fragment {
         adapter= new CustomAdapter(dataModels, getContext());
 
         mRecyclerView.setAdapter(adapter);
+
 
        /* mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -61,7 +60,6 @@ public class subjectFragment extends Fragment {
 */
         return view;
     }
-
 
 
 }

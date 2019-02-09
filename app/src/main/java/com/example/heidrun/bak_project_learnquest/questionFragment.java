@@ -29,6 +29,7 @@ public class questionFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+      //GetQuestion!
         View myFragmentView = inflater.inflate(R.layout.question_fragement, container, false);
         one = myFragmentView.findViewById(R.id.Answ1);
         two = myFragmentView.findViewById(R.id.Answ2);
