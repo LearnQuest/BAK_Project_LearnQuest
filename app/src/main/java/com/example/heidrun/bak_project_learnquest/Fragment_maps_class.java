@@ -9,6 +9,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Criteria;
@@ -62,6 +63,8 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 public class Fragment_maps_class extends Fragment implements OnMapReadyCallback, LocationListener, GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -93,6 +96,8 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation;
 
+    ArrayList<Question> QuestionsArray;
+    private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
     @Nullable
     @Override
@@ -102,14 +107,15 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
-
         if (getArguments() != null) {
             ArrayList<Question> ArrQuestion = (ArrayList<Question>)getArguments().getSerializable("questions");
             if(ArrQuestion != null){
+                QuestionsArray = ArrQuestion;
                 Toast.makeText(getContext(), String.valueOf(ArrQuestion.size()), Toast.LENGTH_SHORT).show();
            }
-
         }
+
+
         //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //
@@ -224,7 +230,14 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new questionFragment()).commit();
+                if(QuestionsArray.size() != 0) {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("questions", QuestionsArray);
+// set MyFragment Arguments
+                    questionFragment myObj = new questionFragment();
+                    myObj.setArguments(bundle);
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                }
                 return false;
             }
         });

@@ -13,12 +13,17 @@
         android:src="@drawable/ic_chat_bubble_black_24dp_grey" />
 
     <TextView
+        android:id="@+id/Question"
         android:layout_width="240dp"
         android:layout_height="200dp"
         android:layout_alignParentRight="true"
         android:padding="30dp"
         android:text="@string/bubble_text"
-        android:textColor="@android:color/background_light" />
+        android:textColor="@android:color/background_light"
+        app:autoSizeMaxTextSize="100sp"
+        app:autoSizeMinTextSize="12sp"
+        app:autoSizeStepGranularity="1sp"
+        app:autoSizeTextType="uniform" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottieViewDino"
@@ -49,8 +54,7 @@
             android:background="@drawable/toggle_buttons"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textOff="test"
-            android:textOn="@string/answer_1" />
+            android:textSize="12sp" />
 
         <ToggleButton
             android:id="@+id/Answ2"
@@ -63,8 +67,7 @@
             android:background="@drawable/toggle_buttons"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textOff="@string/answer_2"
-            android:textOn="@string/answer_2" />
+            android:textSize="12sp" />
 
         <ToggleButton
             android:id="@+id/Answ3"
@@ -77,8 +80,7 @@
             android:background="@drawable/toggle_buttons"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textOff="@string/answer_3"
-            android:textOn="@string/answer_3" />
+            android:textSize="12sp" />
 
         <ToggleButton
             android:id="@+id/Answ4"
@@ -91,8 +93,7 @@
             android:background="@drawable/toggle_buttons"
             android:gravity="center"
             android:textColor="#ffffff"
-            android:textOff="@string/answer_4"
-            android:textOn="@string/answer_4" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/check"

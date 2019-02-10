@@ -78,6 +78,22 @@ public class DatabaseAccess {
         return counter;
     }
 
+    public boolean getCheckedAnswer(String Frage, String Antwort){
+        c = db.rawQuery("select * from fragen where Frage='" + Frage +"'", null);
+        c.moveToNext();
+        int fid = c.getInt(c.getColumnIndex("F_ID"));
+        c = db.rawQuery("select * from fragen_single where F_ID='" + fid +"'", null);
+        c.moveToNext();
+        String a = c.getString(c.getColumnIndex("Loesung1"));
+
+        if(a.equals(Antwort)){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
 
 
 }
