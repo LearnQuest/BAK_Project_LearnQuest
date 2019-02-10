@@ -54,7 +54,7 @@
         android:layout_width="185dp"
         android:layout_height="40dp"
         android:layout_marginTop="8dp"
-        android:text="Got it!"
+        android:text="Alles klar!"
         android:textAlignment="center"
         android:textColor="#C51162"
         android:textSize="20dp"

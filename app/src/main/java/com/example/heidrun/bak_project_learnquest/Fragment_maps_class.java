@@ -3,31 +3,34 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.IBinder;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieComposition;
+import com.airbnb.lottie.LottieDrawable;
+import com.airbnb.lottie.OnCompositionLoadedListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -48,16 +51,13 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
 
@@ -72,14 +72,11 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     private MapView mView;
     private View view;
     LocationManager loc;
-    ArrayList<MarkerOptions> allMarkers;
+    ArrayList<MarkerOptions> allMarkersOptions;
+    ArrayList<Marker> allMarkers;
 
     private static final int LOC_PERM_REQ_CODE = 1;
-    //meters
-    private static final int GEOFENCE_RADIUS = 150;
-    //in milli seconds
-    private static final int GEOFENCE_EXPIRATION = 6000;
-    private GeofencingClient geofencingClient;
+
 
     private FusedLocationProviderClient mFusedLocationClient;
 
@@ -92,6 +89,9 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation;
 
+    boolean gps_enabled = false;
+    boolean network_enabled = false;
+
 
     @Nullable
     @Override
@@ -100,6 +100,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         view = inflater.inflate(R.layout.activity_maps, container, false);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+        loc = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
 
         //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
@@ -116,20 +117,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }//else fehlt!!
 
 
-        //Verschoben auf : onMapReady
-        /*mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-
-                            Toast.makeText(getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-                            CheckDistance(location);
-                        }
-                    }
-                });*/
         createLocationRequest();
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addApi(LocationServices.API)
@@ -159,7 +146,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             mView.onCreate(null);
             mView.onResume();
             mView.getMapAsync(this);
-            geofencingClient = LocationServices.getGeofencingClient(getContext());
         }
         LocationCallback lc = new LocationCallback() {
             @Override
@@ -173,8 +159,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
     //Wenn Maps = da und angezeigt werden kann
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(getContext(), "Test methode 2", Toast.LENGTH_LONG).show();
-        System.out.println("Hallo");
+        // Toast.makeText(getContext(), "Test methode 2", Toast.LENGTH_LONG).show();
         mMap = googleMap;
         try {
             // Hier weise ich unsere App einen angepassten Maps Style zu (JSON-Datein aus Raw-Folder)
@@ -207,17 +192,35 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
         //Ich weise einer Arraylist meine LatLngs zu und mit Hilfe einer Schleife
         //setzte ich an all diesen LatLngs einen Marker
-        allMarkers = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
-        for (int i = 0; i < allMarkers.size(); i++) {
-            mMap.addMarker(allMarkers.get(i)).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+        allMarkersOptions = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
+        allMarkers = new ArrayList<Marker>();
+        for (int i = 0; i < allMarkersOptions.size(); i++) {
+            allMarkers.add(mMap.addMarker(allMarkersOptions.get(i)));
+            allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
         }
 
         //Bei Marker-click öffnet sich hier nun das Question-Fragment
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new questionFragment()).commit();
-                return false;
+                if (checkForQuestion(marker) == true) {
+                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new questionFragment()).commit();
+
+                } else {
+                    final Dialog d = new Dialog(getContext());
+                    d.setTitle("Faulpelz");
+                    d.setContentView(R.layout.faulpelzdialog);
+                    d.show();
+
+                    TextView tv = d.findViewById(R.id.allesklar);
+                    tv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            d.cancel();
+                        }
+                    });
+                }
+                return true;
             }
         });
 
@@ -237,6 +240,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             return;
         }
         //Hier "aktivere" ich die Anzeige des Standorts (der Zugang dazu wird natürlich abgefragt)
+        checkLocationService();
         mMap.setMyLocationEnabled(true);
 
         //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
@@ -266,7 +270,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    //Überprüft ob pPositionsAbruf für App erlaubt ist
+    //Überprüft ob PositionsAbruf für App erlaubt ist
     private boolean isLocationAccessPermitted() {
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -290,24 +294,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         if (isLocationAccessPermitted()) {
             requestLocationAccessPermission();
         } else {
-            String key = "" + lat + "-" + lng;
-            Geofence geofence = getGeofence(lat, lng, key);
-            geofencingClient.addGeofences(getGeofencingRequest(geofence),
-                    getGeofencePendingIntent())
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                // Toast.makeText(getContext(),
-                                // "Location alter hasfdgsdfgs been added",
-                                //Toast.LENGTH_SHORT).show();
-                            } else {
-                                // Toast.makeText(getContext(),
-                                //  "Location alter could not be added",
-                                // Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+
         }
     }
 
@@ -330,47 +317,41 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private PendingIntent getGeofencePendingIntent() {
-        Intent intent = new Intent(getActivity(), Fragment_maps_class.class);
-        return PendingIntent.getService(getContext(), 0, intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
+    private boolean checkForQuestion(Marker marker) {
 
-    private GeofencingRequest getGeofencingRequest(Geofence geofence) {
-        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
-        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL);
-        builder.addGeofence(geofence);
-        return builder.build();
+        LatLng marker1 = marker.getPosition();
+        Location markerloc = new Location("markerpos");
+        markerloc.setLatitude(marker1.latitude);
+        markerloc.setLongitude(marker1.longitude);
+        if (mCurrentLocation.distanceTo(markerloc) < 10) {
+            return true;
+        } else {
+            return false;
+        }
     }
-
-    private Geofence getGeofence(double lat, double lang, String key) {
-        return new Geofence.Builder()
-                .setRequestId(key)
-                .setCircularRegion(lat, lang, GEOFENCE_RADIUS)
-                .setExpirationDuration(Geofence.NEVER_EXPIRE)
-                .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
-                        Geofence.GEOFENCE_TRANSITION_DWELL)
-                .setLoiteringDelay(2000)
-                .build();
-    }
-
 
     private void CheckDistance(Location location) {
-        for (int i = 0; i < allMarkers.size(); i++) {
-            LatLng marker = allMarkers.get(i).getPosition();
+        for (int i = 0; i < allMarkersOptions.size(); i++) {
+
+            LatLng marker = allMarkersOptions.get(i).getPosition();
             Location markerloc = new Location("markerpos");
             markerloc.setLatitude(marker.latitude);
             markerloc.setLongitude(marker.longitude);
 
             Log.i("XXXX", "test");
             if (location.distanceTo(markerloc) < 10) {
-                Toast.makeText(getContext(), "Marker in der Nähe" + i, Toast.LENGTH_SHORT).show();
+                System.out.println("HI + " + i);
+                allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.drache_geschafft_1));
+                Snackbar.make(view, "Marker " + (i + 1) + " befindet sich in der Nähe.", Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+
+
+            } else {
+                allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+
             }
         }
     }
-
-
-
 
 
     @Override
@@ -390,9 +371,10 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             return;
         }
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
-                mGoogleApiClient,mLocationRequest, this);
+                mGoogleApiClient, mLocationRequest, this);
         Log.d(TAG, "Location update started ..............: ");
     }
+
     @Override
     public void onConnectionSuspended(int i) {
 
@@ -405,6 +387,36 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
     @Override
     public void onLocationChanged(Location location) {
+        mCurrentLocation = location;
         CheckDistance(location);
+    }
+
+    public void checkLocationService() {
+        createLocationRequest();
+        gps_enabled = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        network_enabled = loc.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+        if (!gps_enabled && !network_enabled) {
+            // notify user
+            final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+            dialog.setMessage("Bitte aktiviere dein GPS und das Internet für die Positionsbestimmung");
+            dialog.setPositiveButton("Aktivieren", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    getContext().startActivity(myIntent);
+                    //get gps
+                }
+            });
+            dialog.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                    // TODO Auto-generated method stub
+                    paramDialogInterface.dismiss();
+                    checkLocationService();
+                }
+            });
+            dialog.show();
+        }
     }
 }

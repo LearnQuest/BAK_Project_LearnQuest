@@ -12,7 +12,7 @@
         android:layout_width="225dp"
         android:layout_height="39dp"
         android:layout_marginTop="4dp"
-        android:text="How does it work?"
+        android:text="Wie funktioniert das?"
         android:textAlignment="center"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20dp"
@@ -39,11 +39,11 @@
             android:background="#11000000"
             android:ems="10"
             android:inputType="none"
-            android:text="Das Ziel dieses Projektes ist es, eine Android-App zu entwickeln, welche beim
-Lernen unterstützen kann. Diese App ist ähnlich wie Pokemon Go, d.h. die
-StudentInnen gehen an bestimmte Orte (in unserem Campus) um Fragen zu
-entdecken und zu beantworten. Ein Belohnungssystem (To Be Defined) fördert die
-Erfolgserlebnisse der StudentInnen."
+            android:text="Hier auf der Maps siehst du verschiedene grüne Marker. Du bist der blaue Punkt, der sich auf unserem Fh-Campus hin und her bewegt damit dies funtkioniert, stelle bitte sicher, dass du sowohl eine Internetverbindung hast, als auch der App den Zugriff auf deine Position erlaubst. Im Menüpunkt Fächer (subjects) kannst du ein Fach auswählen, welches du lernen möchtest.Es werden nun verschiedene Fragen den grünen Markern auf der Map zugeteilt. Nun kannst du von Marker zu Marker gehen und Fragen zum Gewählten Fach beantworten.Achte hierbei darauf, dass die Marker in deren Nähe du dich befindest rot aufleuchtenn und sich dadurch erkennbar machen.
+Ps: Für verschieden kleinere erreichte Ziele kannst du im Unterpunkt Trophies ein paar kleine Belohnungen freischalten.
+Ganz viel Spaß wünschen
+Heidi und Francesca
+"
             android:textColor="@color/colorPrimaryDark" />
     </ScrollView>
 
@@ -52,7 +52,7 @@ Erfolgserlebnisse der StudentInnen."
         android:layout_width="185dp"
         android:layout_height="48dp"
         android:layout_marginTop="8dp"
-        android:text="Got it!"
+        android:text="Alles klar!"
         android:textAlignment="center"
         android:textColor="#C51162"
         android:textSize="20dp"
