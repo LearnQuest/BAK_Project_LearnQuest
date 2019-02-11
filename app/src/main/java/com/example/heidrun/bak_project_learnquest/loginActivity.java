@@ -1,6 +1,8 @@
 package com.example.heidrun.bak_project_learnquest;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;

@@ -129,7 +129,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             ArrayList<Question> ArrQuestion = (ArrayList<Question>)getArguments().getSerializable("questions");
             if(ArrQuestion != null){
                 QuestionsArray = ArrQuestion;
-                Toast.makeText(getContext(), String.valueOf(ArrQuestion.size()), Toast.LENGTH_SHORT).show();
            }
         }else{
 
@@ -242,14 +241,29 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (checkForQuestion(marker) == true) {
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("questions", QuestionsArray);
-                    // set MyFragment Arguments
-                    questionFragment myObj = new questionFragment();
-                    myObj.setArguments(bundle);
-                    getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                if (checkForQuestion(marker) == true  ) {
+                    if(QuestionsArray.size() != 0) {
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("questions", QuestionsArray);
+                        // set MyFragment Arguments
+                        questionFragment myObj = new questionFragment();
+                        myObj.setArguments(bundle);
+                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                    }else{
+                        final Dialog d = new Dialog(getContext());
+                        d.setTitle("Help");
+                        d.setContentView(R.layout.allquestionsdone_dialog);
+                        d.show();
 
+                        TextView next = d.findViewById(R.id.allDone);
+                        next.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                d.hide();
+
+                            }
+                        });
+                    }
                 } else {
                     final Dialog d = new Dialog(getContext());
                     d.setTitle("Faulpelz");
@@ -366,9 +380,13 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         Location markerloc = new Location("markerpos");
         markerloc.setLatitude(marker1.latitude);
         markerloc.setLongitude(marker1.longitude);
-        if (mCurrentLocation.distanceTo(markerloc) < 10) {
-            return true;
-        } else {
+        if(markerloc!= null && mCurrentLocation != null) {
+            if (mCurrentLocation.distanceTo(markerloc) < 10) {
+                return true;
+            } else {
+                return false;
+            }
+        }else{
             return false;
         }
     }

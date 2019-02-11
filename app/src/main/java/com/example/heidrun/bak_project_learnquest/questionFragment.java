@@ -44,11 +44,13 @@ public class questionFragment extends Fragment implements View.OnClickListener {
 
         if (getArguments() != null) {
             ArrayList<Question> ArrQuestion = (ArrayList<Question>)getArguments().getSerializable("questions");
-            if(ArrQuestion != null){
-
-                Toast.makeText(getContext(), String.valueOf(ArrQuestion.size() + " Questions vorhanden!"), Toast.LENGTH_SHORT).show();
+            if(ArrQuestion != null) {
                 Questions = ArrQuestion;
+            }else{
+                Questions = new ArrayList<Question>();
             }
+        }else{
+            Questions = new ArrayList<Question>();
         }
       //GetQuestion!
         View myFragmentView = inflater.inflate(R.layout.question_fragement, container, false);
