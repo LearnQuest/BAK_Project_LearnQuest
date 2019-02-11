@@ -169,41 +169,4 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
     private int lastPosition = -1;
 
-    /*@Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        // Get the data item for this position
-        Subjects dataModel = getItem(position);
-        // Check if an existing view is being reused, otherwise inflate the view
-        ViewHolder viewHolder; // view lookup cache stored in tag
-
-        final View result;
-
-        if (convertView == null) {
-
-            viewHolder = new ViewHolder();
-            LayoutInflater inflater = LayoutInflater.from(getContext());
-            convertView = inflater.inflate(R.layout.listview_row, parent, false);
-            viewHolder.subName = (TextView) convertView.findViewById(R.id.SubjectTitle);
-            viewHolder.info = (ImageButton) convertView.findViewById(R.id.SelectButton);
-
-            result=convertView;
-
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-            result=convertView;
-        }
-
-      //  Animation animation = AnimationUtils.loadAnimation(mContext, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
-        //result.startAnimation(animation);
-        lastPosition = position;
-
-        viewHolder.subName.setText(dataModel.getSubjectName());
-        viewHolder.info.setOnClickListener(this);
-        viewHolder.info.setTag(position);
-        // Return the completed view to render on screen
-        return convertView;
-    }*/
-
-
 }

@@ -9,20 +9,20 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_home"
-            android:title="Home" />
+            android:title="Startseite" />
 
         <item
             android:id="@+id/nav_subjects"
             android:icon="@drawable/ic_subjects"
-            android:title="Subjects" />
+            android:title="Fächer" />
         <item
             android:id="@+id/nav_trophies"
             android:icon="@drawable/trophies"
-            android:title="Trophies" />
-        <item
+            android:title="Trophäen" />
+       <!-- <item
             android:id="@+id/nav_progress"
             android:icon="@drawable/progress"
-            android:title="Progress" />
+            android:title="Progress" />-->
 
 
 
@@ -38,11 +38,11 @@
             <item
                 android:id="@+id/action_help"
                 android:icon="@drawable/ic_help"
-                android:title="Help" />
+                android:title="Hilfe" />
             <item
                 android:id="@+id/action_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Logout" />
+                android:title="Ausloggen" />
         </menu>
     </item>
 

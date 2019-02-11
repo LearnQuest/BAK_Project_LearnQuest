@@ -139,6 +139,27 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
+    public void onClickOpenURL(View view){
+        String url = "https://pwms.fh-joanneum.at/";
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setData(Uri.parse(url));
+        startActivity(i);
+    }
+    public void openDialog(View view){
+        final Dialog d = new Dialog(this);
+        d.setTitle("Help");
+        d.setContentView(R.layout.fragezeichendalog);
+        d.show();
+
+        TextView tv = d.findViewById(R.id.ok);
+        tv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                d.cancel();
+            }
+        });
+    }
+
     private void handleJsonResult(JSONObject json) throws JSONException {
 
         if (json.has("status")) {

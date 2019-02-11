@@ -18,8 +18,7 @@
         android:background="#11000000"
         android:drawableLeft="@drawable/lock"
         android:ems="10"
-        android:fontFamily="casual"
-        android:hint="Password"
+        android:hint="Passwort"
         android:inputType="textPassword"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,10 +51,9 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
-                android:text="Login with e-Mail"
+                android:text="Anmelden"
                 android:textColor="#fff"
-                android:textSize="18sp"
-                android:fontFamily="casual"/>
+                android:textSize="18sp" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>
@@ -68,12 +66,13 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="8dp"
-        android:text="Forgot Password?"
+        android:text="Passwort vergessen?"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardview" />
+        app:layout_constraintTop_toBottomOf="@+id/cardview"
+        android:onClick="onClickOpenURL"/>
 
     <ImageView
         android:id="@+id/imageView2"
@@ -98,14 +97,23 @@
         android:background="#11000000"
         android:drawableLeft="@drawable/user"
         android:ems="10"
-        android:fontFamily="casual"
-        android:hint="e-Mail"
+        android:hint="Benutzername"
         android:inputType="textPersonName"
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2" />
 
-
+    <ImageButton
+        android:id="@+id/imageButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/fragezeichen"
+        android:background="#11000000"
+        android:onClick="openDialog"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -119,11 +119,7 @@ public class trophiesFragment extends Fragment implements View.OnClickListener {
 
             Snackbar.make(view, "Du hast diese Trophäe noch nicht freigeschaltet!", Snackbar.LENGTH_LONG)
                     .setAction("No action", null).show();
-
-        } //else {
-        //text aus DB anzeigen, was du erreicht hast
-            //Toast.makeText(getContext(), "unlocked", Toast.LENGTH_SHORT).show();
-        //}
+        }
 
     }
 

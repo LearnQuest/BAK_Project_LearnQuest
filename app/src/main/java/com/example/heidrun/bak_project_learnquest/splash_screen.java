@@ -20,6 +20,7 @@ private static int splash_time_out= 4000;
                 try {
                     sleep(3000);
                     Intent intent = new Intent(getApplicationContext(), loginActivity.class);
+                    intent.setFlags(intent.getFlags() | Intent.FLAG_ACTIVITY_NO_HISTORY); // Adds the FLAG_ACTIVITY_NO_HISTORY flag
                     startActivity(intent);
                     finish();
                 } catch (InterruptedException e) {
