@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
@@ -130,7 +131,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 Snackbar.make(view, dataSet.get(position).getSubjectName() +" wurde ausgewählt.", Snackbar.LENGTH_SHORT)
                         .setAction("No action", null).show();
 
-                databaseAccess.close();
+
 
                 pref = this.mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
@@ -139,6 +140,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 editor.putString("CourseName", ff);
                 editor.apply();
 
+                //update trophieentry in DB
+                SharedPreferences prefs = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                String v = prefs.getString("Email", "");
+                databaseAccess.writeToTrophie(4,v );
+                databaseAccess.close();
                 break;
 
             case R.id.InfoButton:

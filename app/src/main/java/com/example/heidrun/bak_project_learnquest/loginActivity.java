@@ -41,7 +41,7 @@ public class loginActivity extends AppCompatActivity {
 
     }
 
-    public void onClickSwitchtoMain(View view) throws InterruptedException {
+    public void onClickSwitchtoMain(View view) throws InterruptedException, JSONException {
         CardView cardView = (CardView) findViewById(R.id.cardview);
 
         sendPOST(view);
@@ -49,8 +49,8 @@ public class loginActivity extends AppCompatActivity {
 
 
     }
-
-    public void sendPOST(View view) throws InterruptedException {
+    private JSONObject res1 = new JSONObject();
+    public void sendPOST(View view) throws InterruptedException, JSONException {
 
 
         Thread thread = new Thread(new Runnable() {
@@ -119,16 +119,17 @@ public class loginActivity extends AppCompatActivity {
         thread.start();
         thread.join();
 
-        LoginProcedure(view);
+        LoginProcedure(view, res1);
 
     }
 
-    private void LoginProcedure(View view){
-        successfulLogin = true;
+    private void LoginProcedure(View view, JSONObject json) throws JSONException {
+        //successfulLogin = true;
         if (successfulLogin) {
 
             Intent intent = new Intent(this, MainActivity.class);
-
+            intent.putExtra("Username", json.get("familyname").toString());
+            intent.putExtra("Email", json.get("email").toString());
             startActivity(intent);
 
 
@@ -144,6 +145,7 @@ public class loginActivity extends AppCompatActivity {
 
             if (json.get("status").equals("OK")) {
                 successfulLogin = true;
+                res1 = json;
             } else {
                 //   Toast.makeText(getApplicationContext(), "Status ERROR", Toast.LENGTH_SHORT).show();
                 successfulLogin = false;

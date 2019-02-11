@@ -3,6 +3,7 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -22,12 +23,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -61,6 +64,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -113,7 +117,25 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                 QuestionsArray = ArrQuestion;
                 Toast.makeText(getContext(), String.valueOf(ArrQuestion.size()), Toast.LENGTH_SHORT).show();
            }
-        }
+        }else{
+
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String sub = prefs.getString("CourseName", "");
+        if(!sub.equals("")){
+            //gewähltes Fach wieder aktivieren!
+
+            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+            databaseAccess.open();
+
+            ArrayList<Question> arrQuestion = databaseAccess.getQuestion(sub);
+            QuestionsArray = arrQuestion;
+          /*  Bundle b = new Bundle();
+            b.putSerializable("questions", (Serializable) arrQuestion);
+            Intent intent = new Intent("custom-message");
+            //            intent.putExtra("quantity",Integer.parseInt(quantity.getText().toString()));
+            intent.putExtras(b);
+            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);*/
+        }}
 
 
         //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
@@ -233,10 +255,24 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                 if(QuestionsArray.size() != 0) {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("questions", QuestionsArray);
-// set MyFragment Arguments
+                    // set MyFragment Arguments
                     questionFragment myObj = new questionFragment();
                     myObj.setArguments(bundle);
                     getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                }else{
+                    final Dialog d = new Dialog(getContext());
+                    d.setTitle("Help");
+                    d.setContentView(R.layout.allquestionsdone_dialog);
+                    d.show();
+
+                    TextView next = d.findViewById(R.id.allDone);
+                    next.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            d.hide();
+
+                        }
+                    });
                 }
                 return false;
             }

@@ -104,18 +104,12 @@
             android:layout_column="0"
             android:layout_columnSpan="2"
             android:layout_gravity="fill_horizontal"
-            android:backgroundTint="@color/colorGreenFH"
+            android:backgroundTint="@color/colorAccent"
             android:text="@string/checkAnswer"
             android:textColor="#ffffff" />
     </GridLayout>
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/success"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="invisible"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="star_success_.json" />
+
 
 
 </RelativeLayout>

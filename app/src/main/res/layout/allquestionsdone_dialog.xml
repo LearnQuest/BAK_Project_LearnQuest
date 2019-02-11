@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_allq"
+        android:layout_width="284dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:paddingTop="15dp"
+
+        android:text="Gratuliere! Du hast alle Fragen von diesem Fach beantwortet!"
+        android:textSize="16dp"
+        android:textAlignment="center"
+        android:textColor="#C51162"
+        android:textStyle="bold" />
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/allQLottie"
+        android:layout_width="284dp"
+        android:layout_height="182dp"
+        android:layout_below="@+id/title_allq"
+        android:layout_alignParentLeft="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="allQuest.json"
+        app:lottie_loop="true"
+        app:lottie_repeatCount="10" />
+
+
+    <TextView
+        android:id="@+id/allDone"
+        android:layout_width="284dp"
+        android:layout_height="43dp"
+        android:layout_below="@+id/allQLottie"
+        android:layout_centerInParent="true"
+        android:text="Juhuu!"
+        android:textAlignment="center"
+        android:textColor="#C51162"
+        android:textSize="20dp"
+        android:textStyle="bold" />
+
+</RelativeLayout>

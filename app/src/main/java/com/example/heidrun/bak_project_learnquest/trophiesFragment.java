@@ -2,6 +2,7 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class trophiesFragment extends Fragment implements View.OnClickListener {
 
     ImageView one;
@@ -33,6 +36,8 @@ public class trophiesFragment extends Fragment implements View.OnClickListener {
     ImageView ten;
     ImageView eleven;
     ImageView twelve;
+
+    private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
     @Nullable
     @Override
@@ -84,6 +89,12 @@ public class trophiesFragment extends Fragment implements View.OnClickListener {
         twelve.setTag(R.drawable.ic_lock_black_24dp);
 
 
+        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(myFragmentView.getContext());
+        databaseAccess.open();
+        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        String v = prefs.getString("Email", "");
+        String t = databaseAccess.checkForTrophie(v);
+        Toast.makeText(getContext(), t, Toast.LENGTH_SHORT).show();
         //aktuelle Trophies anzeigen
         //tag setzen!
 

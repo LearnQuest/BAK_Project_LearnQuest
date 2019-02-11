@@ -2,6 +2,7 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.app.Dialog;
 
+import android.content.SharedPreferences;
 import android.support.v4.app.FragmentTransaction;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -26,11 +28,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String MY_PREFS_NAME ="LearnQuest_Pref_Subject";
     private DrawerLayout drawer;
     ArrayList<Question> QuestionArrayForFragment;
     subjectFragment subfragment;
@@ -41,6 +46,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
        // Snackbar.make(parentLayout, "Login war erfolgreich!", Snackbar.LENGTH_LONG)
        //         .setAction("No action", null).show();
         setContentView(R.layout.activity_main);
+
+        String uname = getIntent().getStringExtra("Username");
+        String mail = getIntent().getStringExtra("Email");
+        Log.i("TESTXXX", uname + " " + mail);
+        SharedPreferences pref ;
+        pref = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putString("Email", mail);
+        editor.apply();
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Home");
        // getSupportActionBar();
@@ -49,9 +64,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        View headerView = navigationView.getHeaderView(0);
+        TextView u = (TextView) headerView.findViewById(R.id.Username);
+        TextView m = (TextView) headerView.findViewById(R.id.Email);
+         u.setText(uname);
+         m.setText(mail);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+
+
 
         //Datenbank öffnen
         LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
@@ -64,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     new Fragment_maps_class()).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
+
+
 
     }
 
@@ -131,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
                 Intent intent = new Intent(this, MainActivity.class);
-
+                this.finish();
                 startActivity(intent);
         }
     }
@@ -143,6 +169,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         f.setContentView(R.layout.activity_choose_character);
         f.show();
        }
+
+
 
 
 }

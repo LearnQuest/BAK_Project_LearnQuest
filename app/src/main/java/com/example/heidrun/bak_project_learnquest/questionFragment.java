@@ -1,11 +1,13 @@
 package com.example.heidrun.bak_project_learnquest;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +58,6 @@ public class questionFragment extends Fragment implements View.OnClickListener {
         three = myFragmentView.findViewById(R.id.Answ3);
         four = myFragmentView.findViewById(R.id.Answ4);
         check = myFragmentView.findViewById(R.id.check);
-        lottieView = myFragmentView.findViewById(R.id.success);
 
         if(Questions.size() != 0) {
             //select Question
@@ -96,13 +97,10 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                     boolean checked = databaseAccess.getCheckedAnswer(q.getText().toString(), AnswerSelected);
 
                     if (checked) {
-                        Questions.remove(index);
+                        if(Questions.size()!= 0){
+                        Questions.remove(index);}
                         System.out.println(index);
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("questions", Questions);
-// set MyFragment Arguments
-                        Fragment_maps_class myObj = new Fragment_maps_class();
-                        myObj.setArguments(bundle);
+
 
                         Bundle b = new Bundle();
                         b.putSerializable("questions", (Serializable) Questions);
@@ -110,21 +108,74 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                         //            intent.putExtra("quantity",Integer.parseInt(quantity.getText().toString()));
                         intent.putExtras(b);
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-                        getFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                myObj).commit();
-                        //Franci Dialog
-                        Toast.makeText(getContext(), "Frage richtig beantwortet", Toast.LENGTH_SHORT).show();
+                        final Dialog d = new Dialog(getContext());
+                        d.setTitle("Help");
+                        d.setContentView(R.layout.succsessdialog);
+                        d.show();
+                        d.setCancelable(false);
+
+                        TextView next = d.findViewById(R.id.next);
+                        next.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                d.hide();
+
+                                if(Questions.size() == 0){
+                                    final Dialog d = new Dialog(getContext());
+                                    d.setTitle("Help");
+                                    d.setContentView(R.layout.allquestionsdone_dialog);
+                                    d.show();
+                                    d.setCancelable(false);
+
+                                    TextView next = d.findViewById(R.id.allDone);
+                                    next.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            d.hide();
+
+                                            Bundle bundle = new Bundle();
+                                            bundle.putSerializable("questions", Questions);
+
+                                            Fragment_maps_class myObj = new Fragment_maps_class();
+                                            myObj.setArguments(bundle);
+                                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                                        }
+                                    });
+                                }else {
+                                    Bundle bundle = new Bundle();
+                                    bundle.putSerializable("questions", Questions);
+
+                                    Fragment_maps_class myObj = new Fragment_maps_class();
+                                    myObj.setArguments(bundle);
+                                    getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                                }
+                            }
+                        });
+
+
 
                     } else {
                         //Franci Dialog
-                        Toast.makeText(getContext(), "Frage falsch beantwortet", Toast.LENGTH_SHORT).show();
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("questions", Questions);
-// set MyFragment Arguments
-                        Fragment_maps_class myObj = new Fragment_maps_class();
-                        myObj.setArguments(bundle);
-                        getFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                                myObj).commit();
+                        final Dialog d = new Dialog(getContext());
+                        d.setTitle("Help");
+                        d.setContentView(R.layout.lossdialog);
+                        d.show();
+                        d.setCancelable(false);
+
+                        TextView next = d.findViewById(R.id.tryAgain);
+                        next.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                d.hide();
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("questions", Questions);
+
+                                Fragment_maps_class myObj = new Fragment_maps_class();
+                                myObj.setArguments(bundle);
+                                getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                            }
+                        });
+
                     }
                 }
             });
@@ -215,6 +266,8 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
+
+
 
 
 

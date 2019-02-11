@@ -12,6 +12,6 @@
     <string name="answer_2">Answer 2</string>
     <string name="answer_3">Answer 3</string>
     <string name="answer_4">Answer 4</string>
-    <string name="checkAnswer">Check Answer!</string>
+    <string name="checkAnswer">Antwort überprüfen!</string>
     <string name="questionCounter">Fragenanzahl</string>
 </resources>

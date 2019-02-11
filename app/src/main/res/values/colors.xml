@@ -8,4 +8,6 @@
     <color name="colorPrimary">#98e145</color>
     <color name="colorPrimaryDark">#1b5e20</color>
     <color name="colorAccent">#08590c</color>
+
+    <color name="pink">#C51162</color>
 </resources>
