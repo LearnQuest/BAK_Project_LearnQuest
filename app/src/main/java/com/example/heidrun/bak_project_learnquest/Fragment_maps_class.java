@@ -159,7 +159,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
     //Wenn Maps = da und angezeigt werden kann
     public void onMapReady(GoogleMap googleMap) {
-        // Toast.makeText(getContext(), "Test methode 2", Toast.LENGTH_LONG).show();
+
         mMap = googleMap;
         try {
             // Hier weise ich unsere App einen angepassten Maps Style zu (JSON-Datein aus Raw-Folder)
@@ -252,7 +252,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            Toast.makeText(getContext(), location.getLatitude() + " " + location.getLongitude(), Toast.LENGTH_SHORT).show();
                             CheckDistance(location);
                         }
                     }
@@ -340,9 +339,8 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
             Log.i("XXXX", "test");
             if (location.distanceTo(markerloc) < 10) {
-                System.out.println("HI + " + i);
                 allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.drache_geschafft_1));
-                Snackbar.make(view, "Marker " + (i + 1) + " befindet sich in der Nähe.", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Eine Frage befindet sich hier in deiner Nähe", Snackbar.LENGTH_LONG)
                         .setAction("No action", null).show();
 
 
@@ -372,7 +370,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
         PendingResult<Status> pendingResult = LocationServices.FusedLocationApi.requestLocationUpdates(
                 mGoogleApiClient, mLocationRequest, this);
-        Log.d(TAG, "Location update started ..............: ");
+
     }
 
     @Override

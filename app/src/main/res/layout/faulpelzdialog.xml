@@ -30,7 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="16dp"
-        android:text="Um diese Frage beantworten zu können musst du hierher kommen!"
+        android:text="Um diese Frage beantworten zu können, musst du hierher kommen!"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="parent"
