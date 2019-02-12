@@ -94,59 +94,66 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_maps, container, false);
+        try {
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+            loc = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
-        loc = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
+            if (getArguments() != null) {
+                ArrayList<Question> ArrQuestion = (ArrayList<Question>) getArguments().getSerializable("questions");
+                if (ArrQuestion != null) {
+                    QuestionsArray = ArrQuestion;
+                }
+            } else {
 
-        if (getArguments() != null) {
-            ArrayList<Question> ArrQuestion = (ArrayList<Question>) getArguments().getSerializable("questions");
-            if (ArrQuestion != null) {
-                QuestionsArray = ArrQuestion;
+                SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                String sub = prefs.getString("CourseName", "");
+                if (!sub.equals("")) {
+                    //gewähltes Fach wieder aktivieren!
+
+                    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+                    databaseAccess.open();
+                    ArrayList<Question> arrQuestion = databaseAccess.getQuestion(sub);
+                    QuestionsArray = arrQuestion;
+                }
             }
-        } else {
-
-            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-            String sub = prefs.getString("CourseName", "");
-            if (!sub.equals("")) {
-                //gewähltes Fach wieder aktivieren!
-
-                DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
-                databaseAccess.open();
-                ArrayList<Question> arrQuestion = databaseAccess.getQuestion(sub);
-                QuestionsArray = arrQuestion;
+            //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                //
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                requestLocationAccessPermission();
+                //return null;
             }
-        }
-        //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            //
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            requestLocationAccessPermission();
-            //return null;
-        }
-        createLocationRequest();
-        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-                .addApi(LocationServices.API)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .build();
+            createLocationRequest();
+            mGoogleApiClient = new GoogleApiClient.Builder(getContext())
+                    .addApi(LocationServices.API)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .build();
 
-        mGoogleApiClient.connect();
+            mGoogleApiClient.connect();
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
+        }
         return view;
 
     }
 
     protected void createLocationRequest() {
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(INTERVAL);
-        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        try {
+            mLocationRequest = new LocationRequest();
+            mLocationRequest.setInterval(INTERVAL);
+            mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+            mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -191,136 +198,136 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style. Error: ", e);
         }
+        try {
+            //Hier zoome ich auf den Fh-Campus hin (erstelle also einen neuen LatLng)
+            LatLng fh = new LatLng(47.068990, 15.406672);
+            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(fh, zoom);
 
-        //Hier zoome ich auf den Fh-Campus hin (erstelle also einen neuen LatLng)
-        LatLng fh = new LatLng(47.068990, 15.406672);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(fh, zoom);
-
-        //Ich beschränke die Maps auf den Fh-Campus
-        mMap.setLatLngBoundsForCameraTarget(fh_Gelaende);
-        mMap.moveCamera(cameraUpdate);//(fh_Gelaende, 0));
-        mMap.setMinZoomPreference(18.0f);
-        //User kann ab hier nicht mehr reiin/raus zoomen
-        mMap.getUiSettings().setZoomGesturesEnabled(false);
-
-
-
-        //hier erstelle ich ein Objekt meiner Klasse Marker, welche mehrere LatLng beinhaltet
-        //an welche ich Marker setzen möchte
-        MarkerNaehern questMarkers = new MarkerNaehern();
-
-        //Ich weise einer Arraylist meine LatLngs zu und mit Hilfe einer Schleife
-        //setzte ich an all diesen LatLngs einen Marker
-        allMarkersOptions = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
-        allMarkers = new ArrayList<Marker>();
-        for (int i = 0; i < allMarkersOptions.size(); i++) {
-            allMarkers.add(mMap.addMarker(allMarkersOptions.get(i)));
-            allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
-        }
-
-        //Bei Marker-click öffnet sich hier nun das Question-Fragment
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (checkForQuestion(marker) == true) {
-
-                    //add marker to list for db
-                    if (!visitedMarkers.contains(marker)) {
-                        visitedMarkers.add(marker);
-                        //write to database
-                        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
-                        databaseAccess.open();
-
-                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-                        String v = prefs.getString("Email", "");
-                        databaseAccess.writeToTrophie(7, v);
-                        databaseAccess.writeToTrophie(8, v);
-                        databaseAccess.writeToTrophie(9, v);
-                        databaseAccess.close();
-                    }
+            //Ich beschränke die Maps auf den Fh-Campus
+            mMap.setLatLngBoundsForCameraTarget(fh_Gelaende);
+            mMap.moveCamera(cameraUpdate);//(fh_Gelaende, 0));
+            mMap.setMinZoomPreference(18.0f);
+            //User kann ab hier nicht mehr reiin/raus zoomen
+            mMap.getUiSettings().setZoomGesturesEnabled(false);
 
 
-                    if (QuestionsArray == null) {
-                        Snackbar.make(view, "Du hast leider kein Fach ausgewählt!", Snackbar.LENGTH_LONG)
-                                .setAction("No action", null).show();
-                    } else {
-                        if (QuestionsArray.size() != 0) {
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("questions", QuestionsArray);
-                            // set MyFragment Arguments
-                            questionFragment myObj = new questionFragment();
-                            myObj.setArguments(bundle);
-                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
-                        } else if (QuestionsArray.size() == 0) {
-                            final Dialog d = new Dialog(getContext());
-                            d.setTitle("Help");
-                            d.setContentView(R.layout.allquestionsdone_dialog);
-                            d.show();
+            //hier erstelle ich ein Objekt meiner Klasse Marker, welche mehrere LatLng beinhaltet
+            //an welche ich Marker setzen möchte
+            MarkerNaehern questMarkers = new MarkerNaehern();
 
-                            TextView next = d.findViewById(R.id.allDone);
-                            next.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    d.hide();
+            //Ich weise einer Arraylist meine LatLngs zu und mit Hilfe einer Schleife
+            //setzte ich an all diesen LatLngs einen Marker
+            allMarkersOptions = (ArrayList<MarkerOptions>) questMarkers.createMarkers();
+            allMarkers = new ArrayList<Marker>();
+            for (int i = 0; i < allMarkersOptions.size(); i++) {
+                allMarkers.add(mMap.addMarker(allMarkersOptions.get(i)));
+                allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+            }
 
-                                }
-                            });
+            //Bei Marker-click öffnet sich hier nun das Question-Fragment
+            mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    if (checkForQuestion(marker) == true) {
+
+                        //add marker to list for db
+                        if (!visitedMarkers.contains(marker)) {
+                            visitedMarkers.add(marker);
+                            //write to database
+                            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+                            databaseAccess.open();
+
+                            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                            String v = prefs.getString("Email", "");
+                            databaseAccess.writeToTrophie(7, v);
+                            databaseAccess.writeToTrophie(8, v);
+                            databaseAccess.writeToTrophie(9, v);
+                            databaseAccess.close();
                         }
-                    }
-                } else {
-                    final Dialog d = new Dialog(getContext());
-                    d.setTitle("Faulpelz");
-                    d.setContentView(R.layout.faulpelzdialog);
-                    d.show();
 
-                    TextView tv = d.findViewById(R.id.allesklar);
-                    tv.setOnClickListener(new View.OnClickListener() {
+
+                        if (QuestionsArray == null) {
+                            Snackbar.make(view, "Du hast leider kein Fach ausgewählt!", Snackbar.LENGTH_LONG)
+                                    .setAction("No action", null).show();
+                        } else {
+                            if (QuestionsArray.size() != 0) {
+                                Bundle bundle = new Bundle();
+                                bundle.putSerializable("questions", QuestionsArray);
+                                // set MyFragment Arguments
+                                questionFragment myObj = new questionFragment();
+                                myObj.setArguments(bundle);
+                                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                            } else if (QuestionsArray.size() == 0) {
+                                final Dialog d = new Dialog(getContext());
+                                d.setTitle("Help");
+                                d.setContentView(R.layout.allquestionsdone_dialog);
+                                d.show();
+
+                                TextView next = d.findViewById(R.id.allDone);
+                                next.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        d.hide();
+
+                                    }
+                                });
+                            }
+                        }
+                    } else {
+                        final Dialog d = new Dialog(getContext());
+                        d.setTitle("Faulpelz");
+                        d.setContentView(R.layout.faulpelzdialog);
+                        d.show();
+
+                        TextView tv = d.findViewById(R.id.allesklar);
+                        tv.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                d.cancel();
+                            }
+                        });
+                    }
+                    return true;
+                }
+            });
+
+            //Hier möchte ich zu jedem Marker einen LocationAlert zuweisen
+            ArrayList<LatLng> allLatLng = (ArrayList<LatLng>) questMarkers.getLatLng();
+            for (int i = 0; i < allLatLng.size(); i++) {
+                addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
+            }
+            //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            //Hier "aktivere" ich die Anzeige des Standorts (der Zugang dazu wird natürlich abgefragt)
+            checkLocationService();
+            mMap.setMyLocationEnabled(true);
+
+
+            //und füge einen Listener hinzu, der meine letzte Position "ermittelt"
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
                         @Override
-                        public void onClick(View v) {
-                            d.cancel();
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                                checkDistance(location);
+                            }
                         }
                     });
-                }
-                return true;
-            }
-        });
 
-        //Hier möchte ich zu jedem Marker einen LocationAlert zuweisen
-        ArrayList<LatLng> allLatLng = (ArrayList<LatLng>) questMarkers.getLatLng();
-        for (int i = 0; i < allLatLng.size(); i++) {
-            addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
-        //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        //Hier "aktivere" ich die Anzeige des Standorts (der Zugang dazu wird natürlich abgefragt)
-        checkLocationService();
-        mMap.setMyLocationEnabled(true);
-
-
-
-        //und füge einen Listener hinzu, der meine letzte Position "ermittelt"
-        mFusedLocationClient.getLastLocation()
-                .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            // Logic to handle location object
-                            checkDistance(location);
-                        }
-                    }
-                });
-
-
     }
 
     @SuppressLint("MissingPermission")
@@ -364,7 +371,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     }
 
     /**
-     *
      * @param requestCode
      * @param permissions
      * @param grantResults
@@ -389,54 +395,59 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     }
 
     /**
-     *
      * @param marker hier werden unsere einzelnen Marker "übergeben"
      * @return
      */
     private boolean checkForQuestion(Marker marker) {
-
-        LatLng marker1 = marker.getPosition();
-        Location markerloc = new Location("markerpos");
-        markerloc.setLatitude(marker1.latitude);
-        markerloc.setLongitude(marker1.longitude);
-        if (markerloc != null && mCurrentLocation != null) {
-            if (mCurrentLocation.distanceTo(markerloc) < 10) {
-                return true;
+        try {
+            LatLng marker1 = marker.getPosition();
+            Location markerloc = new Location("markerpos");
+            markerloc.setLatitude(marker1.latitude);
+            markerloc.setLongitude(marker1.longitude);
+            if (markerloc != null && mCurrentLocation != null) {
+                if (mCurrentLocation.distanceTo(markerloc) < 10) {
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
-        } else {
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
             return false;
         }
     }
 
     /**
-     *
      * @param location hier übergeben wir unsere letzte bekannte Position
      */
     private void checkDistance(Location location) {
-        for (int i = 0; i < allMarkersOptions.size(); i++) {
+        try {
+            for (int i = 0; i < allMarkersOptions.size(); i++) {
 
-            LatLng marker = allMarkersOptions.get(i).getPosition();
-            Location markerloc = new Location("markerpos");
-            markerloc.setLatitude(marker.latitude);
-            markerloc.setLongitude(marker.longitude);
+                LatLng marker = allMarkersOptions.get(i).getPosition();
+                Location markerloc = new Location("markerpos");
+                markerloc.setLatitude(marker.latitude);
+                markerloc.setLongitude(marker.longitude);
 
-            if (location.distanceTo(markerloc) < 10) {
-                allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.drache_geschafft_1));
-                Snackbar.make(view, "Eine Frage befindet sich hier in deiner Nähe", Snackbar.LENGTH_LONG)
-                        .setAction("No action", null).show();
+                if (location.distanceTo(markerloc) < 10) {
+                    allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.drache_geschafft_1));
+                    Snackbar.make(view, "Eine Frage befindet sich hier in deiner Nähe", Snackbar.LENGTH_LONG)
+                            .setAction("No action", null).show();
 
 
-            } else {
-                allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
+                } else {
+                    allMarkers.get(i).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.marker));
 
+                }
             }
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
-     *
      * @param bundle
      */
     @Override
@@ -484,31 +495,35 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
      * wenn nicht -> Aufforderung Internetzugang und Positions-Info -> einschallten
      */
     public void checkLocationService() {
-        createLocationRequest();
-        gps_enabled = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        network_enabled = loc.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        if (!gps_enabled && !network_enabled) {
-            // notify user
-            final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
-            dialog.setMessage("Bitte aktiviere dein GPS und das Internet für die Positionsbestimmung");
-            dialog.setPositiveButton("Aktivieren", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    getContext().startActivity(myIntent);
-                    //get gps
-                }
-            });
-            dialog.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    paramDialogInterface.dismiss();
-                    checkLocationService();
-                }
-            });
-            dialog.show();
+        try {
+            createLocationRequest();
+            gps_enabled = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);
+            network_enabled = loc.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+            if (!gps_enabled && !network_enabled) {
+                // notify user
+                final AlertDialog.Builder dialog = new AlertDialog.Builder(getContext());
+                dialog.setMessage("Bitte aktiviere dein GPS und das Internet für die Positionsbestimmung");
+                dialog.setPositiveButton("Aktivieren", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        // TODO Auto-generated method stub
+                        Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        getContext().startActivity(myIntent);
+                        //get gps
+                    }
+                });
+                dialog.setNegativeButton("Abbrechen", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+                        // TODO Auto-generated method stub
+                        paramDialogInterface.dismiss();
+                        checkLocationService();
+                    }
+                });
+                dialog.show();
+            }
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
     }
 }

@@ -17,8 +17,6 @@
         android:layout_column="0"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
-        android:tooltipText="@string/troph1"
-
         />
 
     <ImageView

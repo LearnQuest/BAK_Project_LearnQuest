@@ -51,6 +51,7 @@ public class DatabaseAccess {
      * @return ein Array mit allen Subjects-Bezeichnungen
      */
     public ArrayList<String> getSubjects(){
+
         ArrayList<String> arrSub = new ArrayList<String>();
         c = db.rawQuery("select Fach from fach", null);
 
@@ -131,6 +132,7 @@ public class DatabaseAccess {
      * @param user für welchen User der DB Eintrag aktualisiert werden soll, Typ String
      */
     public void writeToTrophie(int trophieID, String user){
+
         c = db.rawQuery("select * from trophies_user where TR_ID='" + trophieID + "' and Username='" + user +"'", null);
         int counter=0;
         if(c.moveToNext()){

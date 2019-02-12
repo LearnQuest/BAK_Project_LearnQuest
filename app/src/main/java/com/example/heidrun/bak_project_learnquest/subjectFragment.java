@@ -27,6 +27,7 @@ public class subjectFragment extends Fragment {
 
     /**
      * tritt ein, wenn Fragment erzeugt/geladen wird, Adapter des RecyclerView wird mithilfe von CustomAdapter-Objekt befüllt
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -36,22 +37,26 @@ public class subjectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.subject_fragment, container, false);
+        try {
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.idRecyclerView);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        mRecyclerView=(RecyclerView) view.findViewById(R.id.idRecyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity().getApplicationContext());
+            databaseAccess.open();
 
-        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getActivity().getApplicationContext());
-        databaseAccess.open();
+            dataModels = new ArrayList<Subjects>();
+            for (String s : databaseAccess.getSubjects()) {
+                if (s != null) {
+                    dataModels.add(new Subjects(s));
+                }
+            }
 
-        dataModels = new ArrayList<Subjects>();
-        for(String s :databaseAccess.getSubjects()){
-            if(s!= null){
-            dataModels.add(new Subjects(s));}
+            adapter = new CustomAdapter(dataModels, getContext());
+
+            mRecyclerView.setAdapter(adapter);
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
-
-        adapter= new CustomAdapter(dataModels, getContext());
-
-        mRecyclerView.setAdapter(adapter);
 
         return view;
     }
