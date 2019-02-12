@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout drawer;
     ArrayList<Question> QuestionArrayForFragment;
     subjectFragment subfragment;
+    private String uname;
+    private String mail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +54,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             setContentView(R.layout.activity_main);
 
             // Benutzername & email sollen im Drawe angezeigt werden
-            String uname = getIntent().getStringExtra("Username");
-            String mail = getIntent().getStringExtra("Email");
-            SharedPreferences pref;
+            SharedPreferences pref = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            uname= pref.getString("Username", "Username");
+             mail = pref.getString("Email", "Email");
+
             pref = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
             SharedPreferences.Editor editor = pref.edit();
             editor.putString("Email", mail);
@@ -188,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             drawer.closeDrawer(GravityCompat.START);
         } else {
             Intent intent = new Intent(this, MainActivity.class);
+            
             this.finish();
             startActivity(intent);
         }
