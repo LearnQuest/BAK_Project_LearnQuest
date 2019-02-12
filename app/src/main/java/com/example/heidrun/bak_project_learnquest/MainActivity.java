@@ -40,20 +40,21 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Dialog chooseCharacterDialog;
-    private static final String MY_PREFS_NAME ="LearnQuest_Pref_Subject";
+    private static final String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
     private DrawerLayout drawer;
     ArrayList<Question> QuestionArrayForFragment;
     subjectFragment subfragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_main);
 
-
+        // Benutzername & email sollen im Drawe angezeigt werden
         String uname = getIntent().getStringExtra("Username");
         String mail = getIntent().getStringExtra("Email");
-        SharedPreferences pref ;
+        SharedPreferences pref;
         pref = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         SharedPreferences.Editor editor = pref.edit();
         editor.putString("Email", mail);
@@ -72,14 +73,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View headerView = navigationView.getHeaderView(0);
         TextView u = (TextView) headerView.findViewById(R.id.Username);
         TextView m = (TextView) headerView.findViewById(R.id.Email);
-         u.setText(uname);
-         m.setText(mail);
+        u.setText(uname);
+        m.setText(mail);
 
-         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
-          public void onDrawerSlide(View drawerView, float slideOffset){
-              ((ImageView)((LinearLayout)(findViewById(R.id.nav_header_layout))).findViewById(R.id.imageUser)).setImageResource(MySharedPreference.getPrefImage(getBaseContext()));
+        //hier wird der Nav-Drawer "erzeugt"
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                ((ImageView) ((LinearLayout) (findViewById(R.id.nav_header_layout))).findViewById(R.id.imageUser)).setImageResource(MySharedPreference.getPrefImage(getBaseContext()));
 
-          }
+            }
         };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
@@ -97,20 +99,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
+        //es wird ein neuer Dialog erstellt
         chooseCharacterDialog = new Dialog(this);
         chooseCharacterDialog.setContentView(R.layout.activity_choose_character);
 
     }
 
+    /**
+     *
+     */
     public BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             // Get extra data included in the Intent
-         Bundle b = intent.getExtras();
-            QuestionArrayForFragment = (ArrayList<Question>)b.getSerializable("questions");
+            Bundle b = intent.getExtras();
+            QuestionArrayForFragment = (ArrayList<Question>) b.getSerializable("questions");
         }
     };
 
+    /**
+     * hier wird für unseren Drawer das Layout mit den einzelnen enthaltenen Items bestimmt
+     * jedem Item wird eine action zugeteilt bzw. ein Fragment
+     * @param item
+     * @return
+     */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -118,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //to send QuestionArray to MapsFragment
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("questions", QuestionArrayForFragment);
-            // set MyFragment Arguments
+                // set MyFragment Arguments
                 Fragment_maps_class myObj = new Fragment_maps_class();
                 myObj.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -157,18 +169,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    /**
+     * ermöglicht das öffnen und schließen des Drawers
+     * bei click auf Rückpfeil (handy) wird der Drawer auch nur geschlossen
+     */
     @Override
     public void onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-                Intent intent = new Intent(this, MainActivity.class);
-                this.finish();
-                startActivity(intent);
+            Intent intent = new Intent(this, MainActivity.class);
+            this.finish();
+            startActivity(intent);
         }
     }
-
-
 
 
     public void onClickOpenDialogue(View view) {
@@ -177,6 +191,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     }
 
+    /**
+     * hier wird es möglich gemacht aus verschiedenen Vorgegebenen "Profilbildern" eines zu wählen
+     * @param view
+     */
     public void onClickChangeProfile(View view) {
         int imageID;
         switch (view.getId()) {
@@ -193,11 +211,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageID = R.drawable.einhorn_1;
                 break;
             default:
-                imageID = R.drawable.userdefault;
+                imageID = R.drawable.plus;
                 break;
         }
         ((ImageView) findViewById(R.id.imageUser)).setImageResource(imageID);
-        MySharedPreference.setPrefImage(this,imageID);
+        MySharedPreference.setPrefImage(this, imageID);
 
         ((ImageView) findViewById(R.id.imageUser)).invalidate();
         chooseCharacterDialog.dismiss();

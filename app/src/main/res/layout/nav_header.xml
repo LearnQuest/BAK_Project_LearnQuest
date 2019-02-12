@@ -17,7 +17,7 @@
         android:layout_gravity="bottom|start"
         android:layout_weight="1"
         android:scaleType="fitEnd"
-        android:src="@drawable/userdefault"
+        android:src="@drawable/plus"
         android:onClick="onClickOpenDialogue"
         />
 

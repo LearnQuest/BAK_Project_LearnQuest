@@ -5,25 +5,15 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.PendingIntent;
-import android.content.BroadcastReceiver;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -31,7 +21,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,17 +33,6 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.airbnb.lottie.LottieComposition;
-import com.airbnb.lottie.LottieDrawable;
-import com.airbnb.lottie.OnCompositionLoadedListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.Geofence;
-import com.google.android.gms.location.GeofencingClient;
-import com.google.android.gms.location.GeofencingRequest;
 
 
 import com.google.android.gms.location.LocationListener;
@@ -75,7 +53,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -96,28 +73,24 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     ArrayList<MarkerOptions> allMarkersOptions;
     ArrayList<Marker> allMarkers;
     ArrayList<Marker> visitedMarkers = new ArrayList<>();
-
     private static final int LOC_PERM_REQ_CODE = 1;
-
-
     private FusedLocationProviderClient mFusedLocationClient;
-
     float zoom = 18.0f;
     private LatLngBounds fh_Gelaende = new LatLngBounds(
             new LatLng(47.068679, 15.405647), new LatLng(47.070013, 15.410073));
-
     LocationRequest mLocationRequest;
     GoogleApiClient mGoogleApiClient;
     Location mCurrentLocation;
-
     boolean gps_enabled = false;
     boolean network_enabled = false;
-
     ArrayList<Question> QuestionsArray;
     private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
     @Nullable
     @Override
+    /**
+     * inflates Maps-View
+     */
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.activity_maps, container, false);
@@ -156,9 +129,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
             // for ActivityCompat#requestPermissions for more details.
             requestLocationAccessPermission();
             //return null;
-        }//else fehlt!!
-
-
+        }
         createLocationRequest();
         mGoogleApiClient = new GoogleApiClient.Builder(getContext())
                 .addApi(LocationServices.API)
@@ -178,7 +149,10 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-
+    /**
+     * @param view
+     * @param savedInstanceState
+     */
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
@@ -198,7 +172,9 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
     }
 
-
+    /**
+     * @param googleMap //eine Maps wird angezeigt
+     */
     //Wenn Maps = da und angezeigt werden kann
     public void onMapReady(GoogleMap googleMap) {
 
@@ -227,6 +203,8 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         //User kann ab hier nicht mehr reiin/raus zoomen
         mMap.getUiSettings().setZoomGesturesEnabled(false);
 
+
+
         //hier erstelle ich ein Objekt meiner Klasse Marker, welche mehrere LatLng beinhaltet
         //an welche ich Marker setzen möchte
         MarkerNaehern questMarkers = new MarkerNaehern();
@@ -247,7 +225,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                 if (checkForQuestion(marker) == true) {
 
                     //add marker to list for db
-                    if(!visitedMarkers.contains(marker)) {
+                    if (!visitedMarkers.contains(marker)) {
                         visitedMarkers.add(marker);
                         //write to database
                         DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
@@ -255,9 +233,9 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
 
                         SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                         String v = prefs.getString("Email", "");
-                        databaseAccess.writeToTrophie(7,v );
-                        databaseAccess.writeToTrophie(8,v);
-                        databaseAccess.writeToTrophie(9,v);
+                        databaseAccess.writeToTrophie(7, v);
+                        databaseAccess.writeToTrophie(8, v);
+                        databaseAccess.writeToTrophie(9, v);
                         databaseAccess.close();
                     }
 
@@ -273,7 +251,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                             questionFragment myObj = new questionFragment();
                             myObj.setArguments(bundle);
                             getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
-                        } else if(QuestionsArray.size() == 0) {
+                        } else if (QuestionsArray.size() == 0) {
                             final Dialog d = new Dialog(getContext());
                             d.setTitle("Help");
                             d.setContentView(R.layout.allquestionsdone_dialog);
@@ -312,6 +290,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         for (int i = 0; i < allLatLng.size(); i++) {
             addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
         }
+        //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -326,7 +305,8 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         checkLocationService();
         mMap.setMyLocationEnabled(true);
 
-        //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
+
+
         //und füge einen Listener hinzu, der meine letzte Position "ermittelt"
         mFusedLocationClient.getLastLocation()
                 .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
@@ -335,7 +315,7 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
                             // Logic to handle location object
-                            CheckDistance(location);
+                            checkDistance(location);
                         }
                     }
                 });
@@ -352,6 +332,9 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    /**
+     * @return
+     */
     //Überprüft ob PositionsAbruf für App erlaubt ist
     private boolean isLocationAccessPermitted() {
         if (ContextCompat.checkSelfPermission(getContext(),
@@ -380,6 +363,12 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    /**
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
@@ -399,6 +388,11 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
+    /**
+     *
+     * @param marker hier werden unsere einzelnen Marker "übergeben"
+     * @return
+     */
     private boolean checkForQuestion(Marker marker) {
 
         LatLng marker1 = marker.getPosition();
@@ -416,7 +410,11 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
-    private void CheckDistance(Location location) {
+    /**
+     *
+     * @param location hier übergeben wir unsere letzte bekannte Position
+     */
+    private void checkDistance(Location location) {
         for (int i = 0; i < allMarkersOptions.size(); i++) {
 
             LatLng marker = allMarkersOptions.get(i).getPosition();
@@ -437,12 +435,18 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         }
     }
 
-
+    /**
+     *
+     * @param bundle
+     */
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         startLocationUpdates();
     }
 
+    /**
+     * hier updaten wir stets unsere Location
+     */
     protected void startLocationUpdates() {
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
@@ -472,9 +476,13 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
     @Override
     public void onLocationChanged(Location location) {
         mCurrentLocation = location;
-        CheckDistance(location);
+        checkDistance(location);
     }
 
+    /**
+     * überprüft ob Internetzugang und Position zur Verfügung stehen
+     * wenn nicht -> Aufforderung Internetzugang und Positions-Info -> einschallten
+     */
     public void checkLocationService() {
         createLocationRequest();
         gps_enabled = loc.isProviderEnabled(LocationManager.GPS_PROVIDER);

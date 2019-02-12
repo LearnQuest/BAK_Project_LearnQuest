@@ -14,7 +14,7 @@ public class splash_screen extends AppCompatActivity {
 private static int splash_time_out= 4000;
 
     /**
-     * Splashscreen wird erzeugt, danacha auf Login weitergeleitet
+     * Splashscreen wird erzeugt, danach auf Login weitergeleitet
      * @param savedInstanceState
      */
     @Override
