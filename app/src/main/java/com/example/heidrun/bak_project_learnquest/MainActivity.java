@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                             d.cancel();
                         }
                     });
-
+                    break;
                 case R.id.nav_subjects:
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new subjectFragment()).commit();
                     break;
