@@ -28,14 +28,15 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     boolean test = false;
     int positiongedrückt = -1;
     SharedPreferences pref;
+    ArrayList<String> sub = new ArrayList<String>();
 
 
     private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
     public CustomAdapter(ArrayList<Subjects> data, Context context) {
-       // super(context, R.layout.listview_row, data);
+        // super(context, R.layout.listview_row, data);
         this.dataSet = data;
-        this.mContext=context;
+        this.mContext = context;
     }
 
     @Override
@@ -45,13 +46,12 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         ViewHolder gvh = new ViewHolder(groceryProductView);
 
 
-
         return gvh;
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-       // holder.info.setImageResource(dataSet.get(position).getSubjectName());
+        // holder.info.setImageResource(dataSet.get(position).getSubjectName());
         holder.subName.setText(dataSet.get(position).getSubjectName());
         holder.selButton.setOnClickListener(this);
         holder.selButton.setTag(position);
@@ -60,7 +60,7 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
 
         SharedPreferences prefs = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
         int pageNumber = prefs.getInt("PositionSelected", -1);
-        if(pageNumber != -1 && pageNumber == position){
+        if (pageNumber != -1 && pageNumber == position) {
             //gewähltes Fach wieder aktivieren!
 
             holder.selButton.setImageResource(R.drawable.ic_play_circle_filled_green_36dp);
@@ -87,29 +87,28 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
     }
 
     // View lookup cache
-    public static class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView subName;
         ImageButton selButton;
         ImageButton infoButton;
 
         public ViewHolder(View view) {
             super(view);
-            subName=view.findViewById(R.id.SubjectTitle);
-            selButton=(ImageButton)view.findViewById(R.id.SelectButton);
-            infoButton =(ImageButton)view.findViewById(R.id.InfoButton);
+            subName = view.findViewById(R.id.SubjectTitle);
+            selButton = (ImageButton) view.findViewById(R.id.SelectButton);
+            infoButton = (ImageButton) view.findViewById(R.id.InfoButton);
         }
     }
 
     @Override
     public void onClick(View view) {
-        int position=(Integer) view.getTag();
-       // Object object= getItem(position);
-       // Subjects dataModel=(Subjects) object;
+        int position = (Integer) view.getTag();
+        // Object object= getItem(position);
+        // Subjects dataModel=(Subjects) object;
 
-        switch (view.getId())
-        {
+        switch (view.getId()) {
             case R.id.SelectButton:
-                if(lastSelected!= null){
+                if (lastSelected != null) {
                     lastSelected.setImageResource(R.drawable.ic_play_circle_outline_gray_36dp);
                 }
                 ImageButton bt = view.findViewById(view.getId());
@@ -128,9 +127,8 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 intent.putExtras(b);
                 LocalBroadcastManager.getInstance(this.mContext).sendBroadcast(intent);
 
-                Snackbar.make(view, dataSet.get(position).getSubjectName() +" wurde ausgewählt.", Snackbar.LENGTH_SHORT)
+                Snackbar.make(view, dataSet.get(position).getSubjectName() + " wurde ausgewählt.", Snackbar.LENGTH_SHORT)
                         .setAction("No action", null).show();
-
 
 
                 pref = this.mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
@@ -143,7 +141,9 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 //update trophieentry in DB
                 SharedPreferences prefs = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                 String v = prefs.getString("Email", "");
-                databaseAccess.writeToTrophie(4,v );
+                databaseAccess.writeToTrophie(4, v);
+
+
                 databaseAccess.close();
                 break;
 

@@ -7,11 +7,26 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="app_name">LearnQuest</string>
-    <string name="bubble_text">dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd</string>
+    <string name="bubble_text">PlatzhaltertextPlatzhaltertextPlatzhaltertext</string>
     <string name="answer_1">Answer 1</string>
     <string name="answer_2">Answer 2</string>
     <string name="answer_3">Answer 3</string>
     <string name="answer_4">Answer 4</string>
     <string name="checkAnswer">Antwort überprüfen!</string>
     <string name="questionCounter">Fragenanzahl</string>
+    <string name="troph1">Du hast 1 Frage beantwortet!</string>
+    <string name="troph2">Du hast 10 Fragen beantwortet!</string>
+    <string name="troph3">Du hast 20 Fragen beantwortet!</string>
+    <string name="troph4">Du hast 1 Kurs gestartet!</string>
+    <string name="troph5">Du hast 1 Kurs abgeschlossen!</string>
+    <string name="troph6">Du hast 3 Kurse abgeschlossen!</string>
+    <string name="troph7">Du hast 5 Stationen besucht!</string>
+    <string name="troph8">Du hast 1 Station besucht!</string>
+    <string name="troph9">Du hast alle Stationen besucht!</string>
+    <string name="troph10">Diese Trophäe ist noch in Arbeit!</string>
+    <string name="troph11">Diese Trophäe ist noch in Arbeit</string>
+    <string name="troph12">Diese Trophäe ist noch in Arbeit</string>
+
+
+
 </resources>

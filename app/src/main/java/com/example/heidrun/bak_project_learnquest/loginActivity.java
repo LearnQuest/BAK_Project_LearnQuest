@@ -2,6 +2,8 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
@@ -45,13 +47,29 @@ public class loginActivity extends AppCompatActivity {
 
     public void onClickSwitchtoMain(View view) throws InterruptedException, JSONException {
         CardView cardView = (CardView) findViewById(R.id.cardview);
+        boolean netacces = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo i = connectivityManager.getActiveNetworkInfo();
 
-        sendPOST(view);
+        if (i != null) {
+            netacces = true;
+        } else {
+            netacces = false;
+        }
 
+
+        if (netacces) {
+            sendPOST(view);
+        } else {
+            Snackbar.make(view, "Keine Internetverbindung vorhanden!", Snackbar.LENGTH_LONG)
+                    .setAction("No action", null).show();
+        }
 
 
     }
+
     private JSONObject res1 = new JSONObject();
+
     public void sendPOST(View view) throws InterruptedException, JSONException {
 
 
@@ -117,7 +135,6 @@ public class loginActivity extends AppCompatActivity {
         });
 
 
-
         thread.start();
         thread.join();
 
@@ -141,13 +158,28 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
-    public void onClickOpenURL(View view){
-        String url = "https://pwms.fh-joanneum.at/";
-        Intent i = new Intent(Intent.ACTION_VIEW);
-        i.setData(Uri.parse(url));
-        startActivity(i);
+    public void onClickOpenURL(View view) {
+        boolean netacces = false;
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+
+        if (info != null) {
+            netacces = true;
+        } else {
+            netacces = false;
+        }
+        if (netacces) {
+            String url = "https://pwms.fh-joanneum.at/";
+            Intent i = new Intent(Intent.ACTION_VIEW);
+            i.setData(Uri.parse(url));
+            startActivity(i);
+        } else {
+            Snackbar.make(view, "Keine Internetverbindung vorhanden!", Snackbar.LENGTH_LONG)
+                    .setAction("No action", null).show();
+        }
     }
-    public void openDialog(View view){
+
+    public void openDialog(View view) {
         final Dialog d = new Dialog(this);
         d.setTitle("Help");
         d.setContentView(R.layout.fragezeichendalog);

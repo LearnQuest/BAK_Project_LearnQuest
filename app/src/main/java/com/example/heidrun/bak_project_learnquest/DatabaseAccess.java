@@ -139,15 +139,29 @@ public class DatabaseAccess {
 
     }
 
-    public String checkForTrophie(String u){
+
+    public ArrayList<Integer> checkForTrophie(String u){
         String t="";
+        ArrayList<Integer> trophies = new ArrayList<Integer>();
+        int tid;
+        int done;
+        int need;
         c = db.rawQuery("Select * from trophies_user where Username='" + u +"'",null);
         while(c.moveToNext()){
-            t = c.getString(c.getColumnIndex("Done"));
+            tid = c.getInt((c.getColumnIndex("TR_ID")));
+            done = c.getInt(c.getColumnIndex("Done"));
+            Cursor cc = db.rawQuery("select * from trophies where TR_ID='" + tid +"'", null);
+            if(cc.moveToNext()){
+                need = cc.getInt(cc.getColumnIndex("Need"));
+
+                if(done >= need){
+                    trophies.add(c.getInt(c.getColumnIndex("TR_ID")));
+                }
+            }
         }
 
 
-        return t;
+        return trophies;
     }
 
 

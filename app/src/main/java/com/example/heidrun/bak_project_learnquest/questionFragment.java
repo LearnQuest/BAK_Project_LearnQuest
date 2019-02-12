@@ -2,6 +2,7 @@ package com.example.heidrun.bak_project_learnquest;
 
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -24,6 +25,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static android.content.Context.MODE_PRIVATE;
+
 public class questionFragment extends Fragment implements View.OnClickListener {
 
     ToggleButton one;
@@ -33,10 +36,13 @@ public class questionFragment extends Fragment implements View.OnClickListener {
     Button check;
     TextView q;
     LottieAnimationView lottieView;
+    ArrayList<String> sub = new ArrayList<>();
+    private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
     String AnswerSelected;
 
     ArrayList<Question> Questions;
+    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
 
     @Nullable
     @Override
@@ -93,7 +99,7 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                     //DB Abfrage
                     //danach Frage aus question Array rausstreichen und an home zurück geben
 
-                    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+
                     databaseAccess.open();
 
                     boolean checked = databaseAccess.getCheckedAnswer(q.getText().toString(), AnswerSelected);
@@ -109,6 +115,15 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                         Intent intent = new Intent("custom-message");
                         //            intent.putExtra("quantity",Integer.parseInt(quantity.getText().toString()));
                         intent.putExtras(b);
+
+                        //write to database
+                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                        String v = prefs.getString("Email", "");
+                        databaseAccess.writeToTrophie(1,v );
+                        databaseAccess.writeToTrophie(2,v);
+                        databaseAccess.writeToTrophie(3,v);
+
+
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
                         final Dialog d = new Dialog(getContext());
                         d.setTitle("Help");
@@ -123,6 +138,14 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                                 d.hide();
 
                                 if(Questions.size() == 0){
+                                    SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
+                                    String ff = prefs.getString("CourseName","");
+                                    if (!sub.contains(ff) && !ff.equals("")) {
+                                        sub.add(ff);
+                                        String vv = prefs.getString("Email", "");
+                                        databaseAccess.writeToTrophie(5, vv);
+                                        databaseAccess.writeToTrophie(6, vv);
+                                    }
                                     final Dialog d = new Dialog(getContext());
                                     d.setTitle("Help");
                                     d.setContentView(R.layout.allquestionsdone_dialog);

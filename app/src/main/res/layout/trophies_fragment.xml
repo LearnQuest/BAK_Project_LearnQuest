@@ -17,6 +17,7 @@
         android:layout_column="0"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph1"
 
         />
 
@@ -29,6 +30,7 @@
         android:layout_column="1"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph2"
 
         />
 
@@ -41,6 +43,7 @@
         android:layout_column="2"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph3"
 
         />
 
@@ -53,6 +56,7 @@
         android:layout_column="3"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph4"
 
         />
 
@@ -65,6 +69,7 @@
         android:layout_column="0"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph5"
 
         />
 
@@ -77,6 +82,7 @@
         android:layout_column="1"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph6"
 
         />
 
@@ -89,6 +95,7 @@
         android:layout_column="2"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph7"
 
         />
 
@@ -101,6 +108,7 @@
         android:layout_column="3"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph8"
 
         />
 
@@ -114,6 +122,7 @@
         android:layout_column="0"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph9"
 
         />
 
@@ -126,6 +135,7 @@
         android:layout_column="1"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph10"
 
         />
 
@@ -138,6 +148,7 @@
         android:layout_column="2"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph11"
 
         />
 
@@ -150,6 +161,8 @@
         android:layout_column="3"
         android:layout_columnWeight="1"
         android:src="@drawable/ic_lock_black_24dp"
+        android:tooltipText="@string/troph12"
+
 
         />
 

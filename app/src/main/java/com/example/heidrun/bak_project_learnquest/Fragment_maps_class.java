@@ -85,14 +85,15 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = "Maps_TaG";
-    private static final long INTERVAL = 100 * 60 * 1;
-    private static final long FASTEST_INTERVAL = 100 * 60 * 1;
+    private static final long INTERVAL = 10 * 60 * 1;
+    private static final long FASTEST_INTERVAL = 10 * 60 * 1;
     private GoogleMap mMap;
     private MapView mView;
     private View view;
     LocationManager loc;
     ArrayList<MarkerOptions> allMarkersOptions;
     ArrayList<Marker> allMarkers;
+    ArrayList<Marker> visitedMarkers = new ArrayList<>();
 
     private static final int LOC_PERM_REQ_CODE = 1;
 
@@ -126,22 +127,23 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         if (getArguments() != null) {
-            ArrayList<Question> ArrQuestion = (ArrayList<Question>)getArguments().getSerializable("questions");
-            if(ArrQuestion != null){
+            ArrayList<Question> ArrQuestion = (ArrayList<Question>) getArguments().getSerializable("questions");
+            if (ArrQuestion != null) {
                 QuestionsArray = ArrQuestion;
-           }
-        }else{
+            }
+        } else {
 
-        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        String sub = prefs.getString("CourseName", "");
-        if(!sub.equals("")){
-            //gewähltes Fach wieder aktivieren!
+            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            String sub = prefs.getString("CourseName", "");
+            if (!sub.equals("")) {
+                //gewähltes Fach wieder aktivieren!
 
-            DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
-            databaseAccess.open();
-            ArrayList<Question> arrQuestion = databaseAccess.getQuestion(sub);
-            QuestionsArray = arrQuestion;
-        }}
+                DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+                databaseAccess.open();
+                ArrayList<Question> arrQuestion = databaseAccess.getQuestion(sub);
+                QuestionsArray = arrQuestion;
+            }
+        }
         //Sofort überprüfen ob User der App erlaubt auf die Position zuzugreifen
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //
@@ -241,28 +243,50 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                if (checkForQuestion(marker) == true  ) {
-                    if(QuestionsArray.size() != 0) {
-                        Bundle bundle = new Bundle();
-                        bundle.putSerializable("questions", QuestionsArray);
-                        // set MyFragment Arguments
-                        questionFragment myObj = new questionFragment();
-                        myObj.setArguments(bundle);
-                        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
-                    }else{
-                        final Dialog d = new Dialog(getContext());
-                        d.setTitle("Help");
-                        d.setContentView(R.layout.allquestionsdone_dialog);
-                        d.show();
+                if (checkForQuestion(marker) == true) {
 
-                        TextView next = d.findViewById(R.id.allDone);
-                        next.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                d.hide();
+                    //add marker to list for db
+                    if(!visitedMarkers.contains(marker)) {
+                        visitedMarkers.add(marker);
+                        //write to database
+                        DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+                        databaseAccess.open();
 
-                            }
-                        });
+                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                        String v = prefs.getString("Email", "");
+                        databaseAccess.writeToTrophie(7,v );
+                        databaseAccess.writeToTrophie(8,v);
+                        databaseAccess.writeToTrophie(9,v);
+                        databaseAccess.close();
+                    }
+
+
+                    if (QuestionsArray == null) {
+                        Snackbar.make(view, "Du hast leider kein Fach ausgewählt!", Snackbar.LENGTH_LONG)
+                                .setAction("No action", null).show();
+                    } else {
+                        if (QuestionsArray.size() != 0) {
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("questions", QuestionsArray);
+                            // set MyFragment Arguments
+                            questionFragment myObj = new questionFragment();
+                            myObj.setArguments(bundle);
+                            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                        } else if(QuestionsArray.size() == 0) {
+                            final Dialog d = new Dialog(getContext());
+                            d.setTitle("Help");
+                            d.setContentView(R.layout.allquestionsdone_dialog);
+                            d.show();
+
+                            TextView next = d.findViewById(R.id.allDone);
+                            next.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    d.hide();
+
+                                }
+                            });
+                        }
                     }
                 } else {
                     final Dialog d = new Dialog(getContext());
@@ -380,13 +404,13 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         Location markerloc = new Location("markerpos");
         markerloc.setLatitude(marker1.latitude);
         markerloc.setLongitude(marker1.longitude);
-        if(markerloc!= null && mCurrentLocation != null) {
+        if (markerloc != null && mCurrentLocation != null) {
             if (mCurrentLocation.distanceTo(markerloc) < 10) {
                 return true;
             } else {
                 return false;
             }
-        }else{
+        } else {
             return false;
         }
     }
