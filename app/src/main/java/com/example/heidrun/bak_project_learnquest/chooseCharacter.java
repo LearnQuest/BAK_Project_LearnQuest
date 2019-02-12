@@ -16,7 +16,10 @@ public class chooseCharacter extends AppCompatActivity {
     ImageView image;
     ImageButton button;
 
-
+    /**
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,10 @@ public class chooseCharacter extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param view
+     */
     public void onClickChangeProfile(View view) {
 
         Intent i = new Intent(chooseCharacter.this, MainActivity.class);

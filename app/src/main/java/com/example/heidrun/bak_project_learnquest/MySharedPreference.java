@@ -12,6 +12,11 @@ public class MySharedPreference {
         return PreferenceManager.getDefaultSharedPreferences(ctx);
     }
 
+    /**
+     * hier möchte ich ein Image "speichern" -> einzusetzedes Profilbild
+     * @param ctx
+     * @param image
+     */
     public static void setPrefImage(Context ctx, int image) {
         SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
         editor.putInt(PREF_IMAGE, image);
@@ -19,6 +24,6 @@ public class MySharedPreference {
     }
 
     public static int getPrefImage(Context ctx) {
-        return getSharedPreferences(ctx).getInt(PREF_IMAGE, R.drawable.drachen_position);
+        return getSharedPreferences(ctx).getInt(PREF_IMAGE, R.drawable.hinzufuegen);
     }
 }

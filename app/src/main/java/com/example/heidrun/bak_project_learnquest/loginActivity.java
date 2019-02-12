@@ -45,6 +45,15 @@ public class loginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     *
+     * @param view
+     * @throws InterruptedException
+     * @throws JSONException
+     *
+     * Hier erfolgt die "Anmeldung"
+     * Es wird auch auf Internetverrbindung überprüft
+     */
     public void onClickSwitchtoMain(View view) throws InterruptedException, JSONException {
         CardView cardView = (CardView) findViewById(R.id.cardview);
         boolean netacces = false;
@@ -70,6 +79,12 @@ public class loginActivity extends AppCompatActivity {
 
     private JSONObject res1 = new JSONObject();
 
+    /**
+     * Hier wird die Schnittstelle zu MIRA aufgebaut
+     * @param view
+     * @throws InterruptedException
+     * @throws JSONException
+     */
     public void sendPOST(View view) throws InterruptedException, JSONException {
 
 
@@ -135,6 +150,12 @@ public class loginActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Hier werden Benutzername und Passwort abgefragt
+     * @param view
+     * @param json
+     * @throws JSONException
+     */
     private void LoginProcedure(View view, JSONObject json) throws JSONException {
 
         if (successfulLogin) {
@@ -151,6 +172,11 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Diese Methode ermöglicht es auf eine "Passwort vergessen seite" weitergeleitet zu werden
+     * Es wird davor die Internetverbindung überprüft
+     * @param view
+     */
     public void onClickOpenURL(View view) {
         boolean netacces = false;
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
@@ -172,6 +198,10 @@ public class loginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Methode öffnet ein Dialogfenster
+     * @param view
+     */
     public void openDialog(View view) {
         final Dialog d = new Dialog(this);
         d.setTitle("Help");
@@ -187,6 +217,11 @@ public class loginActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     * @param json
+     * @throws JSONException
+     */
     private void handleJsonResult(JSONObject json) throws JSONException {
 
         if (json.has("status")) {

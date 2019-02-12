@@ -10,10 +10,16 @@ public class MarkerNaehern {
     ArrayList<MarkerOptions> allMarkers;
     ArrayList<LatLng> allMarkersLatLng;
 
+    /**
+     * Hier wird die Methode CreateAllLatLng übergeben
+     */
     public MarkerNaehern() {
         createAllLatLng();
     }
 
+    /**
+     * Hier werden einzelne Marker erzeugt
+      */
     public void createAllLatLng() {
         allMarkersLatLng = new ArrayList();
         allMarkersLatLng.add(new LatLng(47.069335, 15.406887));
@@ -32,6 +38,10 @@ public class MarkerNaehern {
         allMarkersLatLng.add(new LatLng(47.069071, 15.405823));
     }
 
+    /**
+     * Hier werden die einzelnen Marker einer ArrayList zugeordnet
+     * @return
+     */
     public ArrayList createMarkers() {
         allMarkers = new ArrayList<>();
         for (int i = 0; i < allMarkersLatLng.size(); i++) {
