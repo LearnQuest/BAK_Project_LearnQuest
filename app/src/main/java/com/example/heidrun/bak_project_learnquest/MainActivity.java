@@ -48,60 +48,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            setContentView(R.layout.activity_main);
 
-        setContentView(R.layout.activity_main);
+            // Benutzername & email sollen im Drawe angezeigt werden
+            String uname = getIntent().getStringExtra("Username");
+            String mail = getIntent().getStringExtra("Email");
+            SharedPreferences pref;
+            pref = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+            SharedPreferences.Editor editor = pref.edit();
+            editor.putString("Email", mail);
+            editor.apply();
 
-        // Benutzername & email sollen im Drawe angezeigt werden
-        String uname = getIntent().getStringExtra("Username");
-        String mail = getIntent().getStringExtra("Email");
-        SharedPreferences pref;
-        pref = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-        SharedPreferences.Editor editor = pref.edit();
-        editor.putString("Email", mail);
-        editor.apply();
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            toolbar.setTitle("Startseite");
 
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle("Startseite");
-
-        setSupportActionBar(toolbar);
-        drawer = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        LinearLayout navHeader = findViewById(R.id.nav_header_layout);
+            setSupportActionBar(toolbar);
+            drawer = findViewById(R.id.drawer_layout);
+            NavigationView navigationView = findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+            LinearLayout navHeader = findViewById(R.id.nav_header_layout);
 
 
-        View headerView = navigationView.getHeaderView(0);
-        TextView u = (TextView) headerView.findViewById(R.id.Username);
-        TextView m = (TextView) headerView.findViewById(R.id.Email);
-        u.setText(uname);
-        m.setText(mail);
+            View headerView = navigationView.getHeaderView(0);
+            TextView u = (TextView) headerView.findViewById(R.id.Username);
+            TextView m = (TextView) headerView.findViewById(R.id.Email);
+            u.setText(uname);
+            m.setText(mail);
 
-        //hier wird der Nav-Drawer "erzeugt"
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                ((ImageView) ((LinearLayout) (findViewById(R.id.nav_header_layout))).findViewById(R.id.imageUser)).setImageResource(MySharedPreference.getPrefImage(getBaseContext()));
+            //hier wird der Nav-Drawer "erzeugt"
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+                public void onDrawerSlide(View drawerView, float slideOffset) {
+                    ((ImageView) ((LinearLayout) (findViewById(R.id.nav_header_layout))).findViewById(R.id.imageUser)).setImageResource(MySharedPreference.getPrefImage(getBaseContext()));
 
+                }
+            };
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
+
+
+            //Datenbank öffnen
+            LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
+                    new IntentFilter("custom-message"));
+
+            subfragment = new subjectFragment();
+
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                        new Fragment_maps_class()).commit();
+                navigationView.setCheckedItem(R.id.nav_home);
             }
-        };
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
 
-
-        //Datenbank öffnen
-        LocalBroadcastManager.getInstance(this).registerReceiver(mMessageReceiver,
-                new IntentFilter("custom-message"));
-
-        subfragment = new subjectFragment();
-
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new Fragment_maps_class()).commit();
-            navigationView.setCheckedItem(R.id.nav_home);
+            //es wird ein neuer Dialog erstellt
+            chooseCharacterDialog = new Dialog(this);
+            chooseCharacterDialog.setContentView(R.layout.activity_choose_character);
+        } catch (Exception ex) {
+            Toast.makeText(this, getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
-
-        //es wird ein neuer Dialog erstellt
-        chooseCharacterDialog = new Dialog(this);
-        chooseCharacterDialog.setContentView(R.layout.activity_choose_character);
 
     }
 
@@ -120,53 +123,59 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     /**
      * hier wird für unseren Drawer das Layout mit den einzelnen enthaltenen Items bestimmt
      * jedem Item wird eine action zugeteilt bzw. ein Fragment
+     *
      * @param item
      * @return
      */
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.nav_home:
-                //to send QuestionArray to MapsFragment
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("questions", QuestionArrayForFragment);
-                // set MyFragment Arguments
-                Fragment_maps_class myObj = new Fragment_maps_class();
-                myObj.setArguments(bundle);
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                        myObj).commit();
-                break;
+        try {
+            switch (item.getItemId()) {
+                case R.id.nav_home:
+                    //to send QuestionArray to MapsFragment
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("questions", QuestionArrayForFragment);
+                    // set MyFragment Arguments
+                    Fragment_maps_class myObj = new Fragment_maps_class();
+                    myObj.setArguments(bundle);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
+                            myObj).commit();
+                    break;
 
-            case R.id.action_help:
-                final Dialog d = new Dialog(MainActivity.this);
-                d.setTitle("Help");
-                d.setContentView(R.layout.dialog_help);
-                d.show();
+                case R.id.action_help:
+                    final Dialog d = new Dialog(MainActivity.this);
+                    d.setTitle("Help");
+                    d.setContentView(R.layout.dialog_help);
+                    d.show();
 
-                TextView tv = d.findViewById(R.id.textView7);
-                tv.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        d.cancel();
-                    }
-                });
+                    TextView tv = d.findViewById(R.id.textView7);
+                    tv.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            d.cancel();
+                        }
+                    });
 
-            case R.id.nav_subjects:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new subjectFragment()).commit();
-                break;
-            case R.id.nav_trophies:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new trophiesFragment()).commit();
-                break;
-            case R.id.action_logout:
-                Intent intent = new Intent(this, loginActivity.class);
-                startActivity(intent);
-                finish();
-                break;
+                case R.id.nav_subjects:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new subjectFragment()).commit();
+                    break;
+                case R.id.nav_trophies:
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new trophiesFragment()).commit();
+                    break;
+                case R.id.action_logout:
+                    Intent intent = new Intent(this, loginActivity.class);
+                    startActivity(intent);
+                    finish();
+                    break;
 
 
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        } catch (Exception ex) {
+            Toast.makeText(this, getString(R.string.ex), Toast.LENGTH_SHORT).show();
+            return false;
         }
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 
     /**
@@ -193,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     /**
      * hier wird es möglich gemacht aus verschiedenen Vorgegebenen "Profilbildern" eines zu wählen
+     *
      * @param view
      */
     public void onClickChangeProfile(View view) {

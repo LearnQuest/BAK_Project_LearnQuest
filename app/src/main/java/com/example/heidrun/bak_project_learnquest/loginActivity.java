@@ -32,7 +32,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class    loginActivity extends AppCompatActivity {
+public class loginActivity extends AppCompatActivity {
 
     boolean successfulLogin = false;
 
@@ -44,13 +44,10 @@ public class    loginActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @param view
      * @throws InterruptedException
-     * @throws JSONException
-     *
-     * Hier erfolgt die "Anmeldung"
-     * Es wird auch auf Internetverrbindung überprüft
+     * @throws JSONException        Hier erfolgt die "Anmeldung"
+     *                              Es wird auch auf Internetverrbindung überprüft
      */
     public void onClickSwitchtoMain(View view) throws InterruptedException, JSONException {
         CardView cardView = (CardView) findViewById(R.id.cardview);
@@ -78,6 +75,7 @@ public class    loginActivity extends AppCompatActivity {
 
     /**
      * Hier wird die Schnittstelle zu MIRA aufgebaut
+     *
      * @param view
      * @throws InterruptedException
      * @throws JSONException
@@ -145,53 +143,63 @@ public class    loginActivity extends AppCompatActivity {
 
     /**
      * Hier werden Benutzername und Passwort abgefragt
+     *
      * @param view
      * @param json
      * @throws JSONException
      */
     private void LoginProcedure(View view, JSONObject json) throws JSONException {
+        try {
+            if (successfulLogin) {
 
-        if (successfulLogin) {
+                Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("Username", json.get("familyname").toString());
+                intent.putExtra("Email", json.get("email").toString());
+                startActivity(intent);
 
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.putExtra("Username", json.get("familyname").toString());
-            intent.putExtra("Email", json.get("email").toString());
-            startActivity(intent);
-
-        } else {
-            Snackbar.make(view, "Login ist fehlgeschlagen! Bitte die Eingabe überprüfen!", Snackbar.LENGTH_LONG)
-                    .setAction("No action", null).show();
+            } else {
+                Snackbar.make(view, "Login ist fehlgeschlagen! Bitte die Eingabe überprüfen!", Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+            }
+        } catch (Exception ex) {
+            Toast.makeText(this, getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
      * Diese Methode ermöglicht es auf eine "Passwort vergessen seite" weitergeleitet zu werden
      * Es wird davor die Internetverbindung überprüft
+     *
      * @param view
      */
     public void onClickOpenURL(View view) {
-        boolean netacces = false;
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+        try {
+            boolean netacces = false;
+            ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(this.CONNECTIVITY_SERVICE);
+            NetworkInfo info = connectivityManager.getActiveNetworkInfo();
 
-        if (info != null) {
-            netacces = true;
-        } else {
-            netacces = false;
-        }
-        if (netacces) {
-            String url = "https://pwms.fh-joanneum.at/";
-            Intent i = new Intent(Intent.ACTION_VIEW);
-            i.setData(Uri.parse(url));
-            startActivity(i);
-        } else {
-            Snackbar.make(view, "Keine Internetverbindung vorhanden!", Snackbar.LENGTH_LONG)
-                    .setAction("No action", null).show();
+            if (info != null) {
+                netacces = true;
+            } else {
+                netacces = false;
+            }
+            if (netacces) {
+                String url = "https://pwms.fh-joanneum.at/";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
+            } else {
+                Snackbar.make(view, "Keine Internetverbindung vorhanden!", Snackbar.LENGTH_LONG)
+                        .setAction("No action", null).show();
+            }
+        } catch (Exception ex) {
+            Toast.makeText(this, getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
      * Methode öffnet ein Dialogfenster
+     *
      * @param view
      */
     public void openDialog(View view) {
@@ -210,23 +218,25 @@ public class    loginActivity extends AppCompatActivity {
     }
 
     /**
-     *
      * @param json
      * @throws JSONException
      */
     private void handleJsonResult(JSONObject json) throws JSONException {
+        try {
+            if (json.has("status")) {
 
-        if (json.has("status")) {
+                if (json.get("status").equals("OK")) {
+                    successfulLogin = true;
+                    res1 = json;
+                } else {
+                    successfulLogin = false;
+                }
 
-            if (json.get("status").equals("OK")) {
-                successfulLogin = true;
-                res1 = json;
             } else {
                 successfulLogin = false;
             }
-
-        } else {
-            successfulLogin = false;
+        } catch (Exception ex) {
+            Toast.makeText(this, getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
     }
 }

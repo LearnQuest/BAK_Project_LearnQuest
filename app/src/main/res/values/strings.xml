@@ -26,6 +26,9 @@
     <string name="troph10">Diese Trophäe ist noch in Arbeit!</string>
     <string name="troph11">Diese Trophäe ist noch in Arbeit</string>
     <string name="troph12">Diese Trophäe ist noch in Arbeit</string>
+    <string name="trophWorking">Diese Trophäe befindet sich noch in Arbeit!</string>
+    <string name="notroph">Du hast diese Trophäe noch nicht freigeschaltet!</string>
+    <string name="ex">Ein Fehler ist aufgetreten!</string>
 
 
 

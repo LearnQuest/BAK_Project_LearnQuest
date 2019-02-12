@@ -32,22 +32,23 @@ import static android.content.Context.MODE_PRIVATE;
  */
 public class questionFragment extends Fragment implements View.OnClickListener {
 
-   private ToggleButton one;
-   private ToggleButton two;
-   private ToggleButton three;
-   private ToggleButton four;
-   private Button check;
-   private TextView q;
-   ArrayList<String> sub = new ArrayList<>();
-   private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
+    private ToggleButton one;
+    private ToggleButton two;
+    private ToggleButton three;
+    private ToggleButton four;
+    private Button check;
+    private TextView q;
+    ArrayList<String> sub = new ArrayList<>();
+    private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
-   private String AnswerSelected;
+    private String AnswerSelected;
 
     ArrayList<Question> Questions;
     private DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
 
     /**
      * Fragment QUestion wird erzeugt, Question aus zuvor befüllter ArrayList wird randomisiert angezeigt
+     *
      * @param inflater
      * @param container
      * @param savedInstanceState
@@ -56,119 +57,145 @@ public class questionFragment extends Fragment implements View.OnClickListener {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        if (getArguments() != null) {
-            ArrayList<Question> ArrQuestion = (ArrayList<Question>)getArguments().getSerializable("questions");
-            if(ArrQuestion != null) {
-                Questions = ArrQuestion;
-            }else{
+        View myFragmentView = inflater.inflate(R.layout.question_fragement, container, false);
+        try {
+            if (getArguments() != null) {
+                ArrayList<Question> ArrQuestion = (ArrayList<Question>) getArguments().getSerializable("questions");
+                if (ArrQuestion != null) {
+                    Questions = ArrQuestion;
+                } else {
+                    Questions = new ArrayList<Question>();
+                }
+            } else {
                 Questions = new ArrayList<Question>();
             }
-        }else{
-            Questions = new ArrayList<Question>();
-        }
-      //GetQuestion!
-        View myFragmentView = inflater.inflate(R.layout.question_fragement, container, false);
-        q = myFragmentView.findViewById((R.id.Question));
-        one = myFragmentView.findViewById(R.id.Answ1);
-        two = myFragmentView.findViewById(R.id.Answ2);
-        three = myFragmentView.findViewById(R.id.Answ3);
-        four = myFragmentView.findViewById(R.id.Answ4);
-        check = myFragmentView.findViewById(R.id.check);
+            //GetQuestion!
 
-        if(Questions.size() != 0) {
-            //select Question
-            Random randomGenerator = new Random();
-            final int index = randomGenerator.nextInt(Questions.size());
+            q = myFragmentView.findViewById((R.id.Question));
+            one = myFragmentView.findViewById(R.id.Answ1);
+            two = myFragmentView.findViewById(R.id.Answ2);
+            three = myFragmentView.findViewById(R.id.Answ3);
+            four = myFragmentView.findViewById(R.id.Answ4);
+            check = myFragmentView.findViewById(R.id.check);
 
-            q.setText(Questions.get(index).question);
-            one.setText(Questions.get(index).a1);
-            one.setTextOff(Questions.get(index).a1);
-            one.setTextOn(Questions.get(index).a1);
-            two.setTextOff(Questions.get(index).a2);
-            two.setTextOn(Questions.get(index).a2);
-            two.setText(Questions.get(index).a2);
-            three.setTextOff(Questions.get(index).a3);
-            three.setTextOn(Questions.get(index).a3);
-            three.setText(Questions.get(index).a3);
-            four.setTextOff(Questions.get(index).a4);
-            four.setTextOn(Questions.get(index).a4);
-            four.setText(Questions.get(index).a4);
+            if (Questions.size() != 0) {
+                //select Question
+                Random randomGenerator = new Random();
+                final int index = randomGenerator.nextInt(Questions.size());
 
-            one.setOnClickListener(this);
-            two.setOnClickListener(this);
-            three.setOnClickListener(this);
-            four.setOnClickListener(this);
+                q.setText(Questions.get(index).question);
+                one.setText(Questions.get(index).a1);
+                one.setTextOff(Questions.get(index).a1);
+                one.setTextOn(Questions.get(index).a1);
+                two.setTextOff(Questions.get(index).a2);
+                two.setTextOn(Questions.get(index).a2);
+                two.setText(Questions.get(index).a2);
+                three.setTextOff(Questions.get(index).a3);
+                three.setTextOn(Questions.get(index).a3);
+                three.setText(Questions.get(index).a3);
+                four.setTextOff(Questions.get(index).a4);
+                four.setTextOn(Questions.get(index).a4);
+                four.setText(Questions.get(index).a4);
 
-            check.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
+                one.setOnClickListener(this);
+                two.setOnClickListener(this);
+                three.setOnClickListener(this);
+                four.setOnClickListener(this);
 
-                    databaseAccess.open();
+                check.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
 
-                    boolean checked = databaseAccess.getCheckedAnswer(q.getText().toString(), AnswerSelected);
+                        databaseAccess.open();
 
-                    if (checked) {
-                        if(Questions.size()!= 0){
-                        Questions.remove(index);}
-                        System.out.println(index);
+                        boolean checked = databaseAccess.getCheckedAnswer(q.getText().toString(), AnswerSelected);
+
+                        if (checked) {
+                            if (Questions.size() != 0) {
+                                Questions.remove(index);
+                            }
+                            System.out.println(index);
 
 
-                        Bundle b = new Bundle();
-                        b.putSerializable("questions", (Serializable) Questions);
-                        Intent intent = new Intent("custom-message");
-                        intent.putExtras(b);
+                            Bundle b = new Bundle();
+                            b.putSerializable("questions", (Serializable) Questions);
+                            Intent intent = new Intent("custom-message");
+                            intent.putExtras(b);
 
-                        //write to database
-                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
-                        String v = prefs.getString("Email", "");
-                        databaseAccess.writeToTrophie(1,v );
-                        databaseAccess.writeToTrophie(2,v);
-                        databaseAccess.writeToTrophie(3,v);
+                            //write to database
+                            SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                            String v = prefs.getString("Email", "");
+                            databaseAccess.writeToTrophie(1, v);
+                            databaseAccess.writeToTrophie(2, v);
+                            databaseAccess.writeToTrophie(3, v);
 
-                        LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
-                        final Dialog d = new Dialog(getContext());
-                        d.setTitle("Help");
-                        d.setContentView(R.layout.succsessdialog);
-                        d.show();
-                        d.setCancelable(false);
+                            LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
+                            final Dialog d = new Dialog(getContext());
+                            d.setTitle("Help");
+                            d.setContentView(R.layout.succsessdialog);
+                            d.show();
+                            d.setCancelable(false);
 
-                        TextView next = d.findViewById(R.id.next);
-                        next.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                d.hide();
+                            TextView next = d.findViewById(R.id.next);
+                            next.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    d.hide();
 
-                                if(Questions.size() == 0){
-                                    SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME,MODE_PRIVATE);
-                                    String ff = prefs.getString("CourseName","");
-                                    if (!sub.contains(ff) && !ff.equals("")) {
-                                        sub.add(ff);
-                                        String vv = prefs.getString("Email", "");
-                                        databaseAccess.writeToTrophie(5, vv);
-                                        databaseAccess.writeToTrophie(6, vv);
-                                    }
-                                    final Dialog d = new Dialog(getContext());
-                                    d.setTitle("Help");
-                                    d.setContentView(R.layout.allquestionsdone_dialog);
-                                    d.show();
-                                    d.setCancelable(false);
-
-                                    TextView next = d.findViewById(R.id.allDone);
-                                    next.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View v) {
-                                            d.hide();
-
-                                            Bundle bundle = new Bundle();
-                                            bundle.putSerializable("questions", Questions);
-
-                                            Fragment_maps_class myObj = new Fragment_maps_class();
-                                            myObj.setArguments(bundle);
-                                            getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                                    if (Questions.size() == 0) {
+                                        SharedPreferences prefs = getContext().getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+                                        String ff = prefs.getString("CourseName", "");
+                                        if (!sub.contains(ff) && !ff.equals("")) {
+                                            sub.add(ff);
+                                            String vv = prefs.getString("Email", "");
+                                            databaseAccess.writeToTrophie(5, vv);
+                                            databaseAccess.writeToTrophie(6, vv);
                                         }
-                                    });
-                                }else {
+                                        final Dialog d = new Dialog(getContext());
+                                        d.setTitle("Help");
+                                        d.setContentView(R.layout.allquestionsdone_dialog);
+                                        d.show();
+                                        d.setCancelable(false);
+
+                                        TextView next = d.findViewById(R.id.allDone);
+                                        next.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View v) {
+                                                d.hide();
+
+                                                Bundle bundle = new Bundle();
+                                                bundle.putSerializable("questions", Questions);
+
+                                                Fragment_maps_class myObj = new Fragment_maps_class();
+                                                myObj.setArguments(bundle);
+                                                getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                                            }
+                                        });
+                                    } else {
+                                        Bundle bundle = new Bundle();
+                                        bundle.putSerializable("questions", Questions);
+
+                                        Fragment_maps_class myObj = new Fragment_maps_class();
+                                        myObj.setArguments(bundle);
+                                        getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
+                                    }
+                                }
+                            });
+
+
+                        } else {
+                            //Franci Dialog
+                            final Dialog d = new Dialog(getContext());
+                            d.setTitle("Help");
+                            d.setContentView(R.layout.lossdialog);
+                            d.show();
+                            d.setCancelable(false);
+
+                            TextView next = d.findViewById(R.id.tryAgain);
+                            next.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    d.hide();
                                     Bundle bundle = new Bundle();
                                     bundle.putSerializable("questions", Questions);
 
@@ -176,37 +203,15 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                                     myObj.setArguments(bundle);
                                     getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
                                 }
-                            }
-                        });
+                            });
 
-
-
-                    } else {
-                        //Franci Dialog
-                        final Dialog d = new Dialog(getContext());
-                        d.setTitle("Help");
-                        d.setContentView(R.layout.lossdialog);
-                        d.show();
-                        d.setCancelable(false);
-
-                        TextView next = d.findViewById(R.id.tryAgain);
-                        next.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                d.hide();
-                                Bundle bundle = new Bundle();
-                                bundle.putSerializable("questions", Questions);
-
-                                Fragment_maps_class myObj = new Fragment_maps_class();
-                                myObj.setArguments(bundle);
-                                getFragmentManager().beginTransaction().replace(R.id.fragment_container, myObj).commit();
-                            }
-                        });
-
+                        }
                     }
-                }
-            });
+                });
 
+            }
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
         return myFragmentView;
     }
@@ -250,50 +255,55 @@ public class questionFragment extends Fragment implements View.OnClickListener {
 
     /**
      * OnClick Event für die Antwort-Toggle Buttons
+     *
      * @param view
      */
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
+        try {
+            switch (view.getId()) {
 
-            case R.id.Answ1:
-                if (one.isChecked()) {
-                    AnswerSelected = one.getText().toString();
-                    two.setChecked(false);
-                    three.setChecked(false);
-                    four.setChecked(false);
-                }
-                break;
+                case R.id.Answ1:
+                    if (one.isChecked()) {
+                        AnswerSelected = one.getText().toString();
+                        two.setChecked(false);
+                        three.setChecked(false);
+                        four.setChecked(false);
+                    }
+                    break;
 
-            case R.id.Answ2:
-                if (two.isChecked()) {
-                    AnswerSelected = two.getText().toString();
-                    one.setChecked(false);
-                    three.setChecked(false);
-                    four.setChecked(false);
-                }
-                break;
+                case R.id.Answ2:
+                    if (two.isChecked()) {
+                        AnswerSelected = two.getText().toString();
+                        one.setChecked(false);
+                        three.setChecked(false);
+                        four.setChecked(false);
+                    }
+                    break;
 
-            case R.id.Answ3:
-                if (three.isChecked()) {
-                    AnswerSelected = three.getText().toString();
-                    two.setChecked(false);
-                    one.setChecked(false);
-                    four.setChecked(false);
-                }
-                break;
+                case R.id.Answ3:
+                    if (three.isChecked()) {
+                        AnswerSelected = three.getText().toString();
+                        two.setChecked(false);
+                        one.setChecked(false);
+                        four.setChecked(false);
+                    }
+                    break;
 
-            case R.id.Answ4:
-                if (four.isChecked()) {
-                    AnswerSelected = four.getText().toString();
-                    two.setChecked(false);
-                    three.setChecked(false);
-                    one.setChecked(false);
-                }
-                break;
+                case R.id.Answ4:
+                    if (four.isChecked()) {
+                        AnswerSelected = four.getText().toString();
+                        two.setChecked(false);
+                        three.setChecked(false);
+                        one.setChecked(false);
+                    }
+                    break;
 
-            default:
-                break;
+                default:
+                    break;
+            }
+        } catch (Exception ex) {
+            Toast.makeText(getContext(), getString(R.string.ex), Toast.LENGTH_SHORT).show();
         }
     }
 
