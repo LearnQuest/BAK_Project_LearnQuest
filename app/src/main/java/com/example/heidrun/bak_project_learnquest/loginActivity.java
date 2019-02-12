@@ -32,7 +32,7 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-public class loginActivity extends AppCompatActivity {
+public class    loginActivity extends AppCompatActivity {
 
     boolean successfulLogin = false;
 
@@ -41,8 +41,6 @@ public class loginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-
     }
 
     public void onClickSwitchtoMain(View view) throws InterruptedException, JSONException {
@@ -57,21 +55,19 @@ public class loginActivity extends AppCompatActivity {
             netacces = false;
         }
 
-
         if (netacces) {
             sendPOST(view);
         } else {
             Snackbar.make(view, "Keine Internetverbindung vorhanden!", Snackbar.LENGTH_LONG)
                     .setAction("No action", null).show();
+
+
         }
-
-
     }
 
     private JSONObject res1 = new JSONObject();
 
     public void sendPOST(View view) throws InterruptedException, JSONException {
-
 
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -123,16 +119,13 @@ public class loginActivity extends AppCompatActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
             }
         });
-
 
         thread.start();
         thread.join();
 
         LoginProcedure(view, res1);
-
     }
 
     private void LoginProcedure(View view, JSONObject json) throws JSONException {
@@ -143,7 +136,6 @@ public class loginActivity extends AppCompatActivity {
             intent.putExtra("Username", json.get("familyname").toString());
             intent.putExtra("Email", json.get("email").toString());
             startActivity(intent);
-
 
         } else {
             Snackbar.make(view, "Login ist fehlgeschlagen! Bitte die Eingabe überprüfen!", Snackbar.LENGTH_LONG)
