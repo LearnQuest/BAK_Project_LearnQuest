@@ -9,12 +9,15 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Diese Klasse enthält alle Methoden, die für die Verbindung, Verbindungsabbau oder sämtliche Abfragen notwendig sind
+ */
 public class DatabaseAccess {
 
     private SQLiteOpenHelper openHelper;
     private SQLiteDatabase db;
     private static DatabaseAccess instance;
-    Cursor c = null;
+    private Cursor c = null;
 
     private DatabaseAccess(Context context){
         this.openHelper = new DatabaseOpenHelper(context);
@@ -27,16 +30,26 @@ public class DatabaseAccess {
         return instance;
     }
 
+    /**
+     * öffnet die DB
+     */
     public void open(){
         this.db=openHelper.getWritableDatabase();
     }
 
+    /**
+     * schließt die DB
+     */
     public void close(){
         if(db!=null){
             this.db.close();
         }
     }
 
+    /**
+     * liest die Subjects aus der DB ein
+     * @return ein Array mit allen Subjects-Bezeichnungen
+     */
     public ArrayList<String> getSubjects(){
         ArrayList<String> arrSub = new ArrayList<String>();
         c = db.rawQuery("select Fach from fach", null);
@@ -47,6 +60,11 @@ public class DatabaseAccess {
         return arrSub;
     }
 
+    /**
+     * liest alle Question zu einem bestimmten Fach aus der DB aus
+     * @param fach vom Typ String
+     * @return ArrayList mit allen Questions
+     */
     public ArrayList<Question> getQuestion(String fach){
         ArrayList<Question> arrQ = new ArrayList<Question>();
         c = db.rawQuery("select Fach_ID from fach where Fach='" + fach + "'",null);
@@ -67,6 +85,11 @@ public class DatabaseAccess {
         return arrQ;
     }
 
+    /**
+     * gibt zurück, wie viele Fragen zu diesem Fach vorhanden sind
+     * @param fach vom Typ String
+     * @return integer, Anzahl der Fragen
+     */
     public int getQuestionCounter(String fach){
         int counter=0;
         c = db.rawQuery("select Fach_ID from fach where Fach='" + fach + "'",null);
@@ -80,6 +103,12 @@ public class DatabaseAccess {
         return counter;
     }
 
+    /**
+     * holt die richtige Antwort aus der DB und überprüft diese mit der ausgewählten Antwort
+     * @param Frage vom Typ String
+     * @param Antwort vom Typ String
+     * @return true, wenn Frage richtig, false, wenn Frage falsch
+     */
     public boolean getCheckedAnswer(String Frage, String Antwort){
         c = db.rawQuery("select * from fragen where Frage='" + Frage +"'", null);
         c.moveToNext();
@@ -96,6 +125,11 @@ public class DatabaseAccess {
 
     }
 
+    /**
+     * aktualisiert den Wert in der DB bezüglich den Trophies
+     * @param trophieID welche Trophy aktualisiert werden soll, vom Typ int
+     * @param user für welchen User der DB Eintrag aktualisiert werden soll, Typ String
+     */
     public void writeToTrophie(int trophieID, String user){
         c = db.rawQuery("select * from trophies_user where TR_ID='" + trophieID + "' and Username='" + user +"'", null);
         int counter=0;
@@ -116,7 +150,6 @@ public class DatabaseAccess {
             //new DB Entry
             int lastID=0;
             c= db.rawQuery("select * from trophies_user where ID = (select max(ID) from trophies_user)",null);
-           // c.moveToLast();
             if(c.moveToFirst()) {
                 lastID = c.getInt(c.getColumnIndex("ID"));
             }else{
@@ -134,14 +167,14 @@ public class DatabaseAccess {
             db.setTransactionSuccessful();
             db.endTransaction();
         }
-
-
-
     }
 
-
+    /**
+     * prüft, ob Trophy freigeschaltet
+     * @param u für welchen User, Typ String
+     * @return ArrayList mit allen Trophy_IDs, wenn freigeschaltet
+     */
     public ArrayList<Integer> checkForTrophie(String u){
-        String t="";
         ArrayList<Integer> trophies = new ArrayList<Integer>();
         int tid;
         int done;

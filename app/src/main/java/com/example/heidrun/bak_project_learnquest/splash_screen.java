@@ -7,9 +7,16 @@ import android.os.Bundle;
 
 import gr.net.maroulis.library.EasySplashScreen;
 
-
+/**
+ * Klasse von splashscreen Activity
+ */
 public class splash_screen extends AppCompatActivity {
 private static int splash_time_out= 4000;
+
+    /**
+     * Splashscreen wird erzeugt, danacha auf Login weitergeleitet
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

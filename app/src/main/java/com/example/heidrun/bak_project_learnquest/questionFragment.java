@@ -27,23 +27,32 @@ import java.util.Random;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Klasse für das Question-Fragment
+ */
 public class questionFragment extends Fragment implements View.OnClickListener {
 
-    ToggleButton one;
-    ToggleButton two;
-    ToggleButton three;
-    ToggleButton four;
-    Button check;
-    TextView q;
-    LottieAnimationView lottieView;
-    ArrayList<String> sub = new ArrayList<>();
-    private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
+   private ToggleButton one;
+   private ToggleButton two;
+   private ToggleButton three;
+   private ToggleButton four;
+   private Button check;
+   private TextView q;
+   ArrayList<String> sub = new ArrayList<>();
+   private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
-    String AnswerSelected;
+   private String AnswerSelected;
 
     ArrayList<Question> Questions;
-    DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
+    private DatabaseAccess databaseAccess = DatabaseAccess.getInstance(getContext());
 
+    /**
+     * Fragment QUestion wird erzeugt, Question aus zuvor befüllter ArrayList wird randomisiert angezeigt
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -94,11 +103,6 @@ public class questionFragment extends Fragment implements View.OnClickListener {
             check.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    // lottieView.setVisibility(View.VISIBLE);
-                    //Antwort prüfen
-                    //DB Abfrage
-                    //danach Frage aus question Array rausstreichen und an home zurück geben
-
 
                     databaseAccess.open();
 
@@ -113,7 +117,6 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                         Bundle b = new Bundle();
                         b.putSerializable("questions", (Serializable) Questions);
                         Intent intent = new Intent("custom-message");
-                        //            intent.putExtra("quantity",Integer.parseInt(quantity.getText().toString()));
                         intent.putExtras(b);
 
                         //write to database
@@ -122,7 +125,6 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                         databaseAccess.writeToTrophie(1,v );
                         databaseAccess.writeToTrophie(2,v);
                         databaseAccess.writeToTrophie(3,v);
-
 
                         LocalBroadcastManager.getInstance(getContext()).sendBroadcast(intent);
                         final Dialog d = new Dialog(getContext());
@@ -205,14 +207,13 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                 }
             });
 
-      /* one.setOnCheckedChangeListener(changeChecker);
-       two.setOnCheckedChangeListener(changeChecker);
-       three.setOnCheckedChangeListener(changeChecker);
-       four.setOnCheckedChangeListener(changeChecker);*/
         }
         return myFragmentView;
     }
 
+    /**
+     * Methode/Event, dass nur 1 Antwort ausgewählt werden kann
+     */
     CompoundButton.OnCheckedChangeListener changeChecker = new CompoundButton.OnCheckedChangeListener() {
 
         @Override
@@ -247,6 +248,10 @@ public class questionFragment extends Fragment implements View.OnClickListener {
     };
 
 
+    /**
+     * OnClick Event für die Antwort-Toggle Buttons
+     * @param view
+     */
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -291,14 +296,6 @@ public class questionFragment extends Fragment implements View.OnClickListener {
                 break;
         }
     }
-
-
-
-
-
-
-
-    /**/
 
 
 }

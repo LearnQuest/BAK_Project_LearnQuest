@@ -24,23 +24,34 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Klasse f. Trophy-Fragment
+ */
 public class trophiesFragment extends Fragment implements View.OnClickListener {
 
-    ImageView one;
-    ImageView two;
-    ImageView three;
-    ImageView four;
-    ImageView five;
-    ImageView six;
-    ImageView seven;
-    ImageView eigth;
-    ImageView nine;
-    ImageView ten;
-    ImageView eleven;
-    ImageView twelve;
+    private ImageView one;
+    private ImageView two;
+    private ImageView three;
+    private ImageView four;
+    private ImageView five;
+    private ImageView six;
+    private ImageView seven;
+    private ImageView eigth;
+    private ImageView nine;
+    private ImageView ten;
+    private ImageView eleven;
+    private ImageView twelve;
 
     private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
+    /**
+     * erzeugt den Inhalt des Fragments, OnClickListener für alle ImageViews werden zugewiesen
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -136,21 +147,19 @@ public class trophiesFragment extends Fragment implements View.OnClickListener {
                     break;
                 default:
                     Snackbar.make(myFragmentView, "Diese Trophäe ist nocht in Arbeit!", Snackbar.LENGTH_LONG)
-                            .setAction("No action", null).show();
-            }
-           // Toast.makeText(getContext(), String.valueOf(trophie.get(i)), Toast.LENGTH_SHORT).show();
+                            .setAction("No action", null).show();            }
         }
-        //aktuelle Trophies anzeigen
-        //tag setzen!
-
         return myFragmentView;
     }
 
+    /**
+     * OnClick Event für ImageView
+     * @param view
+     */
     @Override
     public void onClick(View view) {
 
         ImageView iv = (ImageView) view;
-
 
         Integer dr = (Integer) iv.getTag();
 
@@ -165,9 +174,9 @@ public class trophiesFragment extends Fragment implements View.OnClickListener {
 
             Snackbar.make(view, "Du hast diese Trophäe noch nicht freigeschaltet!", Snackbar.LENGTH_LONG)
                     .setAction("No action", null).show();
-        }else{
+        } else {
 
-            Snackbar.make(view,  "Du hast diese Trophäe freigeschaltet!", Snackbar.LENGTH_LONG)
+            Snackbar.make(view, "Du hast diese Trophäe freigeschaltet!", Snackbar.LENGTH_LONG)
                     .setAction("No action", null).show();
         }
 

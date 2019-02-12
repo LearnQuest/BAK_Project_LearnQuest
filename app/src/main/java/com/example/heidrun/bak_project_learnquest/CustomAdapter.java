@@ -20,38 +20,54 @@ import java.util.ArrayList;
 
 import static android.content.Context.MODE_PRIVATE;
 
+/**
+ * Klasse, zum Befüllen des Subjectfragments mit Daten aus der Datenbank
+ */
 public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder> implements View.OnClickListener {
 
     private ArrayList<Subjects> dataSet;
-    Context mContext;
-    ImageButton lastSelected;
+    private Context mContext;
+    private ImageButton lastSelected;
     boolean test = false;
     int positiongedrückt = -1;
-    SharedPreferences pref;
-    ArrayList<String> sub = new ArrayList<String>();
-
-
+    private SharedPreferences pref;
+    private ArrayList<String> sub = new ArrayList<String>();
     private final static String MY_PREFS_NAME = "LearnQuest_Pref_Subject";
 
+    /**
+     * Konstruktor dieser Klasse
+     * @param data enthält alle Subjects aus der DB
+     * @param context Context fron dem Subjectfragment übergeben
+     */
     public CustomAdapter(ArrayList<Subjects> data, Context context) {
-        // super(context, R.layout.listview_row, data);
         this.dataSet = data;
         this.mContext = context;
     }
 
+    /**
+     * erstellt einen Viewholder für Recyclerview
+     * @param parent
+     * @param viewType
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //inflate the layout file
         View groceryProductView = LayoutInflater.from(parent.getContext()).inflate(R.layout.listview_row, parent, false);
         ViewHolder gvh = new ViewHolder(groceryProductView);
 
-
         return gvh;
     }
 
+    /**
+     * aktualisiert die Elemente im Reclyclerview mit den richtigen Werten
+     * Shared Prefs werden verwendet, um ausgewähltes Fach beibehalten zu können
+     * @param holder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        // holder.info.setImageResource(dataSet.get(position).getSubjectName());
+
         holder.subName.setText(dataSet.get(position).getSubjectName());
         holder.selButton.setOnClickListener(this);
         holder.selButton.setTag(position);
@@ -62,7 +78,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         int pageNumber = prefs.getInt("PositionSelected", -1);
         if (pageNumber != -1 && pageNumber == position) {
             //gewähltes Fach wieder aktivieren!
-
             holder.selButton.setImageResource(R.drawable.ic_play_circle_filled_green_36dp);
             lastSelected = holder.selButton;
 
@@ -74,19 +89,25 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
             Bundle b = new Bundle();
             b.putSerializable("questions", (Serializable) arrQuestion);
             Intent intent = new Intent("custom-message");
-            //            intent.putExtra("quantity",Integer.parseInt(quantity.getText().toString()));
             intent.putExtras(b);
             LocalBroadcastManager.getInstance(this.mContext).sendBroadcast(intent);
+            databaseAccess.close();
         }
 
     }
 
+    /**
+     * gibt die Größe der ArrayList zurück, in der sich alle Subjects von der DB befinden
+     * @return
+     */
     @Override
     public int getItemCount() {
         return dataSet.size();
     }
 
-    // View lookup cache
+    /**
+     * Items in RecyclerView tatsächlich befüllen
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView subName;
         ImageButton selButton;
@@ -100,11 +121,14 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
         }
     }
 
+    /**
+     * OnClick event für jedes einzelne Recyclerview-Item
+     * wird geprüft, ob Fach auswählen oder Informationen-Button selektiert wurde
+     * @param view
+     */
     @Override
     public void onClick(View view) {
-        int position = (Integer) view.getTag();
-        // Object object= getItem(position);
-        // Subjects dataModel=(Subjects) object;
+        int position = (Integer) view.getTag(); //positions des Items, welches angeklickt wurde
 
         switch (view.getId()) {
             case R.id.SelectButton:
@@ -123,13 +147,11 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 Bundle b = new Bundle();
                 b.putSerializable("questions", (Serializable) arrQuestion);
                 Intent intent = new Intent("custom-message");
-                //            intent.putExtra("quantity",Integer.parseInt(quantity.getText().toString()));
                 intent.putExtras(b);
                 LocalBroadcastManager.getInstance(this.mContext).sendBroadcast(intent);
 
                 Snackbar.make(view, dataSet.get(position).getSubjectName() + " wurde ausgewählt.", Snackbar.LENGTH_SHORT)
                         .setAction("No action", null).show();
-
 
                 pref = this.mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                 SharedPreferences.Editor editor = pref.edit();
@@ -142,7 +164,6 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                 SharedPreferences prefs = mContext.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
                 String v = prefs.getString("Email", "");
                 databaseAccess.writeToTrophie(4, v);
-
 
                 databaseAccess.close();
                 break;
@@ -160,13 +181,10 @@ public class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.ViewHolder
                         .setAction("No action", null).show();
 
                 databaseAccess1.close();
-                //TODO:
-                //Dialogfenster für informationen erstellen & öffnen
 
                 break;
         }
     }
 
-    private int lastPosition = -1;
 
 }

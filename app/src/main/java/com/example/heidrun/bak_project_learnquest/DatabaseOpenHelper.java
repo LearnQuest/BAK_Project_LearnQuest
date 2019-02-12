@@ -8,6 +8,9 @@ import android.support.annotation.Nullable;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
+/**
+ * Helperklasse, welche DB verwendet werden soll mit welcher Version
+ */
 public class DatabaseOpenHelper extends SQLiteAssetHelper
 {
     private static final String Database_Name="LearnQuest_DB_v2.db";

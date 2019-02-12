@@ -102,8 +102,6 @@ public class loginActivity extends AppCompatActivity {
                     os.close();
 
                     int responseCode = client.getResponseCode();
-                    //final StringBuilder output = new StringBuilder("Request URL " + url);
-                    //output.append(System.getProperty())
                     BufferedReader br = new BufferedReader(new InputStreamReader(client.getInputStream()));
                     String line;
                     StringBuilder stringb = new StringBuilder();
@@ -112,14 +110,9 @@ public class loginActivity extends AppCompatActivity {
                     }
                     br.close();
 
-                    Log.i("TRYConnect", stringb.toString());
-
                     JSONObject res = new JSONObject(stringb.toString());
 
                     handleJsonResult(res);
-
-                    Log.i("TryConnect", res.toString());
-
 
                     client.disconnect();
 
@@ -143,7 +136,7 @@ public class loginActivity extends AppCompatActivity {
     }
 
     private void LoginProcedure(View view, JSONObject json) throws JSONException {
-        //successfulLogin = true;
+
         if (successfulLogin) {
 
             Intent intent = new Intent(this, MainActivity.class);
@@ -202,7 +195,6 @@ public class loginActivity extends AppCompatActivity {
                 successfulLogin = true;
                 res1 = json;
             } else {
-                //   Toast.makeText(getApplicationContext(), "Status ERROR", Toast.LENGTH_SHORT).show();
                 successfulLogin = false;
             }
 

@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle("Startseite");
 
-        // getSupportActionBar();
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
@@ -109,8 +108,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             // Get extra data included in the Intent
          Bundle b = intent.getExtras();
             QuestionArrayForFragment = (ArrayList<Question>)b.getSerializable("questions");
-
-            //Toast.makeText(MainActivity.this,String.valueOf(a.size()) ,Toast.LENGTH_SHORT).show();
         }
     };
 
@@ -121,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 //to send QuestionArray to MapsFragment
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("questions", QuestionArrayForFragment);
-// set MyFragment Arguments
+            // set MyFragment Arguments
                 Fragment_maps_class myObj = new Fragment_maps_class();
                 myObj.setArguments(bundle);
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,

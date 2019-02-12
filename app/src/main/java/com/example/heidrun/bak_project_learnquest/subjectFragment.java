@@ -16,14 +16,22 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+/**
+ * Klasse, des SubjectFragments
+ */
 public class subjectFragment extends Fragment {
 
-    //ListView listView;
     private RecyclerView mRecyclerView;
-    //muss später geändert werden f. DB
     ArrayList<Subjects> dataModels;
     private static CustomAdapter adapter;
 
+    /**
+     * tritt ein, wenn Fragment erzeugt/geladen wird, Adapter des RecyclerView wird mithilfe von CustomAdapter-Objekt befüllt
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
@@ -41,23 +49,10 @@ public class subjectFragment extends Fragment {
             dataModels.add(new Subjects(s));}
         }
 
-
         adapter= new CustomAdapter(dataModels, getContext());
 
         mRecyclerView.setAdapter(adapter);
 
-
-       /* mRecyclerView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                Subjects dataModel= dataModels.get(position);
-
-                Snackbar.make(view, dataModel.getSubjectName(), Snackbar.LENGTH_LONG)
-                        .setAction("No action", null).show();
-            }
-        });
-*/
         return view;
     }
 
