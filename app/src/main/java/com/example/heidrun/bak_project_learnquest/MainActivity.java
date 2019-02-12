@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 imageID = R.drawable.einhorn_1;
                 break;
             default:
-                imageID = R.drawable.userdefault;
+                imageID = R.drawable.plus;
                 break;
         }
         ((ImageView) findViewById(R.id.imageUser)).setImageResource(imageID);

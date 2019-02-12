@@ -203,20 +203,6 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         //User kann ab hier nicht mehr reiin/raus zoomen
         mMap.getUiSettings().setZoomGesturesEnabled(false);
 
-        //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
-        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        //Hier "aktivere" ich die Anzeige des Standorts (der Zugang dazu wird natürlich abgefragt)
-        checkLocationService();
-        mMap.setMyLocationEnabled(true);
 
 
         //hier erstelle ich ein Objekt meiner Klasse Marker, welche mehrere LatLng beinhaltet
@@ -304,6 +290,21 @@ public class Fragment_maps_class extends Fragment implements OnMapReadyCallback,
         for (int i = 0; i < allLatLng.size(); i++) {
             addLocationAlert(allLatLng.get(i).latitude, allLatLng.get(i).longitude);
         }
+        //Hier möchte ich nun auf meine letzte bekannte Position zurückgreifen
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        //Hier "aktivere" ich die Anzeige des Standorts (der Zugang dazu wird natürlich abgefragt)
+        checkLocationService();
+        mMap.setMyLocationEnabled(true);
+
 
 
         //und füge einen Listener hinzu, der meine letzte Position "ermittelt"

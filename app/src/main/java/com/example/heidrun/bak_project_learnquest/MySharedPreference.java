@@ -13,7 +13,7 @@ public class MySharedPreference {
     }
 
     /**
-     * hier möchte ich ein Image "speichern" -> einzusetzedes Profilbild
+     * hier möchte ich ein Image "speichern" -> einzusetzendes Profilbild
      * @param ctx
      * @param image
      */
@@ -24,6 +24,6 @@ public class MySharedPreference {
     }
 
     public static int getPrefImage(Context ctx) {
-        return getSharedPreferences(ctx).getInt(PREF_IMAGE, R.drawable.hinzufuegen);
+        return getSharedPreferences(ctx).getInt(PREF_IMAGE, R.drawable.plus);
     }
 }
